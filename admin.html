@@ -593,74 +593,75 @@
   <section class="tab" id="tab-docs">
     <div class="card doc">
       <h3 data-i18n="docs_title">Integration guide</h3>
-      <div class="hint" data-i18n="docs_hint">
+      <div class="hint" data-i18n-html="docs_hint">
         OpenAI-style endpoints: downstream projects only change base_url and api_key.
         <br>BASE URL: <code id="dBase">—</code>
       </div>
 
-      <h4>1. 可用模型</h4>
+      <h4 data-i18n="doc_models_h">1. Available models</h4>
       <div class="tblwrap"><table>
-        <thead><tr><th>模型 ID</th><th>用途</th><th>接口</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">muse-spark</td><td>文本 / 代码对话（支持流式）</td><td class="mono">POST /v1/chat/completions<br>POST /v1/responses</td></tr>
-          <tr><td class="mono">muse-image</td><td>文生图 / 图像编辑</td><td class="mono">POST /v1/images/generations</td></tr>
-          <tr><td class="mono">muse-video</td><td>文生视频 / 图生视频</td><td class="mono">POST /v1/videos → GET /v1/videos/{id}</td></tr>
+        <thead><tr data-i18n-html="doc_models_th"><th>Model ID</th><th>Purpose</th><th>Endpoint</th></tr></thead>
+        <tbody data-i18n-html="doc_models_rows">
+          <tr><td class="mono">muse-spark</td><td>Text / code chat (streaming supported)</td><td class="mono">POST /v1/chat/completions<br>POST /v1/responses</td></tr>
+          <tr><td class="mono">muse-image</td><td>Text-to-image / image editing</td><td class="mono">POST /v1/images/generations</td></tr>
+          <tr><td class="mono">muse-video</td><td>Text-to-video / image-to-video</td><td class="mono">POST /v1/videos → GET /v1/videos/{id}</td></tr>
         </tbody>
       </table></div>
-      <div class="hint" style="margin-top:6px">
-        这三个就是 Muse 系列的真实能力：<b>Muse Spark</b>（语言 / 代码）、<b>Muse Image</b>（生图）、
-        <b>Muse Video</b>（生视频）。muse.ai 网页是自动路由的 agent、界面没有模型选择器，
-        所以 <code>model</code> 字段只用于兼容下游 —— 传 <code>gpt-4o</code>、
-        <code>claude-sonnet-4</code>、<code>dall-e-3</code> 等常见名字会自动映射到对应能力。
+      <div class="hint" style="margin-top:6px" data-i18n-html="doc_models_hint">
+        These three are Muse's real capabilities: <b>Muse Spark</b> (language / code),
+        <b>Muse Image</b> (image), <b>Muse Video</b> (video). The muse.ai page is an
+        auto-routing agent with no model picker, so the <code>model</code> field is only
+        for downstream compat — common names like <code>gpt-4o</code>,
+        <code>claude-sonnet-4</code> or <code>dall-e-3</code> auto-map to the matching capability.
       </div>
 
-      <h4>2. 对话 / 写代码</h4>
-      <pre class="code"><span class="cp" onclick="cp(this)">复制</span><span class="c"># 非流式</span>
+      <h4 data-i18n="doc_chat_h">2. Chat / code</h4>
+      <pre class="code" data-i18n-html="doc_chat_pre"><span class="cp" onclick="cp(this)">Copy</span><span class="c"># Non-streaming</span>
 curl -X POST <span class="s">"BASE/v1/chat/completions"</span> \
   -H <span class="s">"Authorization: Bearer $MUSE2API_KEY"</span> \
   -H <span class="s">"Content-Type: application/json"</span> \
   -d <span class="s">'{"model":"muse-spark","messages":[{"role":"user","content":"写一个 Python 快排"}]}'</span>
 
-<span class="c"># 流式：加 "stream":true，返回标准 SSE（data: {...} / data: [DONE]）</span></pre>
+<span class="c"># Streaming: add "stream":true, returns standard SSE (data: {...} / data: [DONE])</span></pre>
 
-      <h4>3. 生图（curl）</h4>
-      <pre class="code"><span class="cp" onclick="cp(this)">复制</span>curl -X POST <span class="s">"BASE/v1/images/generations"</span> \
+      <h4 data-i18n="doc_image_h">3. Image (curl)</h4>
+      <pre class="code" data-i18n-html="doc_image_pre"><span class="cp" onclick="cp(this)">Copy</span>curl -X POST <span class="s">"BASE/v1/images/generations"</span> \
   -H <span class="s">"Authorization: Bearer $MUSE2API_KEY"</span> \
   -H <span class="s">"Content-Type: application/json"</span> \
   -d <span class="s">'{"prompt":"一只戴宇航头盔的柴犬","size":"1:1","response_format":"url"}'</span>
 
-<span class="c"># 返回</span>
+<span class="c"># Response</span>
 {<span class="k">"created"</span>:1790148495,<span class="k">"data"</span>:[{
   <span class="k">"revised_prompt"</span>:<span class="s">"一只戴宇航头盔的柴犬"</span>,
   <span class="k">"url"</span>:<span class="s">"http://your-server:18610/v1/media/xxxx.webp"</span>,
   <span class="k">"kind"</span>:<span class="s">"image"</span>,<span class="k">"bytes"</span>:23860}]}
 
-<span class="c"># url 是完整绝对地址，可直接给下游渲染 / 下载；/v1/media/* 无需鉴权。</span>
-<span class="c"># 想要 base64 就传 "response_format":"b64_json"。</span></pre>
+<span class="c"># url is a full absolute URL for downstream rendering / download; /v1/media/* needs no auth.</span>
+<span class="c"># Pass "response_format":"b64_json" for base64.</span></pre>
 
-      <h4>4. 生视频（curl，异步）</h4>
-      <pre class="code"><span class="cp" onclick="cp(this)">复制</span><span class="c"># ① 创建任务</span>
+      <h4 data-i18n="doc_video_h">4. Video (curl, async)</h4>
+      <pre class="code" data-i18n-html="doc_video_pre"><span class="cp" onclick="cp(this)">Copy</span><span class="c"># 1. Create task</span>
 curl -X POST <span class="s">"BASE/v1/videos"</span> \
   -H <span class="s">"Authorization: Bearer $MUSE2API_KEY"</span> \
   -H <span class="s">"Content-Type: application/json"</span> \
   -d <span class="s">'{"prompt":"一只小猫在草地上走动","duration":5,"size":"16:9"}'</span>
 <span class="c"># → {"id":"task_xxx","status":"queued"}</span>
 
-<span class="c"># ② 轮询结果</span>
+<span class="c"># 2. Poll result</span>
 curl <span class="s">"BASE/v1/videos/task_xxx"</span> -H <span class="s">"Authorization: Bearer $MUSE2API_KEY"</span>
 <span class="c"># → {"status":"succeeded","result":{"url":"/v1/media/xxx.mp4"}}</span></pre>
 
-      <h4>5. Python（openai SDK 兼容）</h4>
-      <pre class="code"><span class="cp" onclick="cp(this)">复制</span><span class="k">from</span> openai <span class="k">import</span> OpenAI
+      <h4 data-i18n="doc_py_h">5. Python (openai SDK compatible)</h4>
+      <pre class="code" data-i18n-html="doc_py_pre"><span class="cp" onclick="cp(this)">Copy</span><span class="k">from</span> openai <span class="k">import</span> OpenAI
 <span class="k">import</span> time
 
 client = OpenAI(base_url=<span class="s">"BASE/v1"</span>, api_key=<span class="s">"m2a_..."</span>)
 
-<span class="c"># 生图</span>
+<span class="c"># Image</span>
 r = client.images.generate(model=<span class="s">"muse-image"</span>, prompt=<span class="s">"一只戴宇航头盔的柴犬"</span>)
 <span class="k">print</span>(r.data[<span class="s">0</span>].url)
 
-<span class="c"># 生视频（走原生接口，因为是异步任务）</span>
+<span class="c"># Video (native endpoint, async task)</span>
 <span class="k">import</span> requests
 t = requests.post(<span class="s">"BASE/v1/videos"</span>, json={<span class="s">"prompt"</span>:<span class="s">"小猫走动"</span>,<span class="s">"duration"</span>:<span class="s">5</span>},
                   headers={<span class="s">"Authorization"</span>:<span class="s">"Bearer m2a_..."</span>}).json()
@@ -671,82 +672,86 @@ t = requests.post(<span class="s">"BASE/v1/videos"</span>, json={<span class="s"
     time.sleep(<span class="s">5</span>)
 <span class="k">print</span>(s)</pre>
 
-      <h4>6. 管理接口</h4>
+      <h4 data-i18n="doc_admin_h">6. Admin API</h4>
       <div class="tblwrap"><table>
-        <thead><tr><th>方法</th><th>路径</th><th>说明</th></tr></thead>
-        <tbody>
-          <tr><td class="mono">GET</td><td class="mono">/admin/status</td><td>服务总览 + 账号池 + 最近任务</td></tr>
-          <tr><td class="mono">GET</td><td class="mono">/admin/accounts</td><td>账号列表</td></tr>
-          <tr><td class="mono">POST</td><td class="mono">/admin/accounts</td><td>添加账号（单条 / batch 批量文本）</td></tr>
-          <tr><td class="mono">PATCH</td><td class="mono">/admin/accounts/{id}</td><td>改标签 / 启用禁用</td></tr>
-          <tr><td class="mono">DELETE</td><td class="mono">/admin/accounts/{id}</td><td>删除账号</td></tr>
-          <tr><td class="mono">POST</td><td class="mono">/admin/accounts/{id}/test</td><td>真实校验会话有效性（顺带刷新额度）</td></tr>
-          <tr><td class="mono">POST</td><td class="mono">/admin/accounts/{id}/quota</td><td>实时读取该账号剩余额度</td></tr>
-          <tr><td class="mono">POST</td><td class="mono">/admin/accounts/{id}/cookies</td><td>更新该账号 cookie</td></tr>
-          <tr><td class="mono">GET</td><td class="mono">/admin/tasks</td><td>任务记录</td></tr>
-          <tr><td class="mono">GET</td><td class="mono">/admin/media</td><td>媒体库列表</td></tr>
-          <tr><td class="mono">POST</td><td class="mono">/admin/media/delete</td><td>批量删除媒体文件</td></tr>
+        <thead><tr data-i18n-html="doc_admin_th"><th>Method</th><th>Path</th><th>Description</th></tr></thead>
+        <tbody data-i18n-html="doc_admin_rows">
+          <tr><td class="mono">GET</td><td class="mono">/admin/status</td><td>Service overview + account pool + recent tasks</td></tr>
+          <tr><td class="mono">GET</td><td class="mono">/admin/accounts</td><td>Account list</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/admin/accounts</td><td>Add account (single / batch text)</td></tr>
+          <tr><td class="mono">PATCH</td><td class="mono">/admin/accounts/{id}</td><td>Rename / enable-disable</td></tr>
+          <tr><td class="mono">DELETE</td><td class="mono">/admin/accounts/{id}</td><td>Delete account</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/admin/accounts/{id}/test</td><td>Verify session for real (also refreshes quota)</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/admin/accounts/{id}/quota</td><td>Read remaining quota live</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/admin/accounts/{id}/cookies</td><td>Update account cookies</td></tr>
+          <tr><td class="mono">GET</td><td class="mono">/admin/tasks</td><td>Task log</td></tr>
+          <tr><td class="mono">GET</td><td class="mono">/admin/media</td><td>Media library list</td></tr>
+          <tr><td class="mono">POST</td><td class="mono">/admin/media/delete</td><td>Batch-delete media files</td></tr>
         </tbody>
       </table></div>
 
-      <h4>7. 鉴权</h4>
-      <div class="hint" style="margin:0">
-        除 <code>/healthz</code>、<code>/readyz</code>、<code>/v1/media/*</code> 外，其余接口均需
-        <code>Authorization: Bearer &lt;API Key&gt;</code>。API Key 在服务器
-        <code>/opt/muse2api/.env</code> 的 <code>MUSE2API_KEY</code> 中配置。
+      <h4 data-i18n="doc_auth_h">7. Auth</h4>
+      <div class="hint" style="margin:0" data-i18n-html="doc_auth_hint">
+        Except <code>/healthz</code>, <code>/readyz</code> and <code>/v1/media/*</code>,
+        all endpoints require <code>Authorization: Bearer &lt;API Key&gt;</code>.
+        The API key is configured as <code>MUSE2API_KEY</code> in
+        <code>/opt/muse2api/.env</code> on the server.
       </div>
 
-      <h4>8. 接入各类客户端 / 智能体</h4>
-      <div class="hint">
-        凡是支持「自定义 OpenAI 兼容端点」的客户端，都只填三个值就能用：
+      <h4 data-i18n="doc_clients_h">8. Client integrations</h4>
+      <div class="hint" data-i18n-html="doc_clients_hint">
+        Any client supporting custom OpenAI-compatible endpoints only needs these three values:
       </div>
       <div class="tblwrap" style="margin-top:8px"><table>
-        <thead><tr><th>配置项</th><th>填什么</th></tr></thead>
-        <tbody>
-          <tr><td>Base URL / API 地址</td><td class="mono">http://&lt;你的服务器IP或域名&gt;:18610/v1</td></tr>
-          <tr><td>API Key</td><td class="mono">m2a_...（本页顶部「接入信息」里那个）</td></tr>
-          <tr><td>模型名</td><td class="mono">muse-spark</td></tr>
+        <thead><tr data-i18n-html="doc_clients_th"><th>Setting</th><th>Value</th></tr></thead>
+        <tbody data-i18n-html="doc_clients_rows">
+          <tr><td>Base URL / API endpoint</td><td class="mono">http://&lt;your-server-IP-or-domain&gt;:18610/v1</td></tr>
+          <tr><td>API Key</td><td class="mono">m2a_... (the one under Access Info at the top of this page)</td></tr>
+          <tr><td>Model name</td><td class="mono">muse-spark</td></tr>
         </tbody>
       </table></div>
 
-      <div class="hint" style="margin-top:14px">
-        <b>模型名随便填也能用</b>：常见名字（<code>gpt-4o</code>、<code>gpt-5</code>、
-        <code>claude-sonnet-4</code>、<code>deepseek-chat</code>、<code>gemini-2.5-pro</code> 等）
-        会自动映射到对应能力；完全没见过的名字会原样透传，muse.ai 那边本来就是自动路由，
-        不影响结果。
+      <div class="hint" style="margin-top:14px" data-i18n-html="doc_clients_note">
+        <b>Any model name works</b>: common names (<code>gpt-4o</code>, <code>gpt-5</code>,
+        <code>claude-sonnet-4</code>, <code>deepseek-chat</code>, <code>gemini-2.5-pro</code>, …)
+        auto-map to the matching capability; totally unknown names pass through untouched —
+        muse.ai routes automatically anyway, results are unaffected.
       </div>
 
-      <h4 style="margin-top:18px">按客户端类型看能不能用</h4>
+      <h4 style="margin-top:18px" data-i18n="doc_compat_h">Compatibility by client type</h4>
       <div class="tblwrap"><table>
-        <thead><tr><th>客户端类型</th><th>依赖能力</th><th>状态</th></tr></thead>
-        <tbody>
-          <tr><td>对话 / 聊天类（桌面端、Web UI、浏览器插件）</td><td class="mono">POST /v1/chat/completions</td><td><span class="badge ok">✅ 可用</span></td></tr>
-          <tr><td>流式输出（打字机效果）</td><td class="mono">stream:true（标准 SSE）</td><td><span class="badge ok">✅ 可用</span></td></tr>
-          <tr><td>代码补全 / 内联补全插件</td><td class="mono">POST /v1/chat/completions</td><td><span class="badge ok">✅ 可用</span></td></tr>
-          <tr><td>翻译 / 总结 / 解释类工具</td><td class="mono">POST /v1/chat/completions</td><td><span class="badge ok">✅ 可用</span></td></tr>
-          <tr><td>画图类客户端</td><td class="mono">POST /v1/images/generations</td><td><span class="badge ok">✅ 可用</span></td></tr>
-          <tr><td>视频生成客户端</td><td class="mono">POST /v1/videos（异步轮询）</td><td><span class="badge ok">✅ 可用</span></td></tr>
-          <tr><td>需要「工具调用」的自主 Agent 模式</td><td class="mono">tool_calls / function calling</td><td><span class="badge warn">⚠️ 不可用</span></td></tr>
+        <thead><tr data-i18n-html="doc_compat_th"><th>Client type</th><th>Required capability</th><th>Status</th></tr></thead>
+        <tbody data-i18n-html="doc_compat_rows">
+          <tr><td>Chat clients (desktop, Web UI, browser plugins)</td><td class="mono">POST /v1/chat/completions</td><td><span class="badge ok">✅ Available</span></td></tr>
+          <tr><td>Streaming output (typewriter effect)</td><td class="mono">stream:true (standard SSE)</td><td><span class="badge ok">✅ Available</span></td></tr>
+          <tr><td>Code / inline completion plugins</td><td class="mono">POST /v1/chat/completions</td><td><span class="badge ok">✅ Available</span></td></tr>
+          <tr><td>Translation / summary / explanation tools</td><td class="mono">POST /v1/chat/completions</td><td><span class="badge ok">✅ Available</span></td></tr>
+          <tr><td>Image clients</td><td class="mono">POST /v1/images/generations</td><td><span class="badge ok">✅ Available</span></td></tr>
+          <tr><td>Video generation clients</td><td class="mono">POST /v1/videos (async polling)</td><td><span class="badge ok">✅ Available</span></td></tr>
+          <tr><td>Autonomous agent mode requiring tool calls</td><td class="mono">tool_calls / function calling</td><td><span class="badge warn">⚠️ Unavailable</span></td></tr>
         </tbody>
       </table></div>
 
-      <div class="hint" style="margin-top:8px">
-        <b>关于「工具调用」这条限制（重要，已实测）：</b><br>
-        muse.ai 的网页助手对「输出伪工具调用 JSON」有明确的对齐拒绝策略 —— 实测原话是
-        「我不会按这种 JSON 格式输出'伪工具调用'——我没有 get_weather 这个工具」。
-        用三种不同措辞、不同位置的提示词协议去适配，全部失败。<br>
-        所以：依赖 <code>tool_calls</code> 的<b>自主 Agent 模式</b>（自动读写文件、执行命令那一类）接不了；
-        但所有<b>问答式</b>用法 —— 对话、写代码、解释、翻译、总结、生图、生视频 —— <b>全部完全可用</b>。<br>
-        客户端若强行带上 <code>tools</code> 字段，接口不会报错，会忽略工具声明、按普通对话正常回答。
+      <div class="hint" style="margin-top:8px" data-i18n-html="doc_toolcall">
+        <b>About the tool-calling limitation (important, verified):</b><br>
+        The muse.ai web assistant has an explicit alignment policy against emitting
+        pseudo-tool-call JSON — its tested reply: "I will not output 'pseudo tool calls'
+        in this JSON format — I don't have a get_weather tool".
+        Tried three different protocol wordings/positions, all failed.<br>
+        So: autonomous <b>agent mode</b> with <code>tool_calls</code> (auto file read/write,
+        command execution) is not supported; but all <b>Q&amp;A-style</b> usage — chat, coding,
+        explanation, translation, summary, image, video — <b>all fully works</b>.<br>
+        If a client sends a <code>tools</code> field anyway, the API won't error: tool
+        declarations are ignored and the request is answered as a normal chat.
       </div>
     </div>
   </section>
 </main>
 
-<footer style="max-width:1280px;margin:18px auto 32px;padding:12px 24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line)">
-  <span>开源仓库：<a href="https://github.com/czg86389-hub/muse2api" target="_blank" style="color:var(--acc);text-decoration:none">GitHub · muse2api</a></span>
+<footer style="max-width:1280px;margin:18px auto 32px;padding:12px 24px;text-align:center;color:var(--muted);font-size:12px;border-top:1px solid var(--line)" data-i18n-html="doc_footer">
+  <span>Open-source repo: <a href="https://github.com/czg86389-hub/muse2api" target="_blank" style="color:var(--acc);text-decoration:none">GitHub · muse2api</a></span>
   <span style="margin:0 10px">·</span>
-  <span>社区认可与友情链接：<a href="https://linux.do/" target="_blank" style="color:var(--acc);text-decoration:none;font-weight:600">LINUX DO 社区 (https://linux.do/)</a></span>
+  <span>Community &amp; link: <a href="https://linux.do/" target="_blank" style="color:var(--acc);text-decoration:none;font-weight:600">LINUX DO (https://linux.do/)</a></span>
 </footer>
 
 <div id="toasts"></div>
@@ -833,7 +838,34 @@ en: {
   dur: "Duration (s)", gen_img: "Start image generation", gen_vid: "Start video generation",
   vid_test: "Video test", vid_hint: "Async task, usually done in 60–120s; the page polls automatically.",
   docs_title: "Integration guide",
-  docs_hint: "OpenAI-style endpoints: downstream projects only change base_url and api_key. BASE URL: ",
+  docs_hint: "OpenAI-style endpoints: downstream projects only change base_url and api_key.<br>BASE URL: <code id=\"dBase\">—</code>",
+  doc_models_h: "1. Available models",
+  doc_models_th: "<tr><th>Model ID</th><th>Purpose</th><th>Endpoint</th></tr>",
+  doc_models_rows: "<tr><td class=\"mono\">muse-spark</td><td>Text / code chat (streaming supported)</td><td class=\"mono\">POST /v1/chat/completions<br>POST /v1/responses</td></tr><tr><td class=\"mono\">muse-image</td><td>Text-to-image / image editing</td><td class=\"mono\">POST /v1/images/generations</td></tr><tr><td class=\"mono\">muse-video</td><td>Text-to-video / image-to-video</td><td class=\"mono\">POST /v1/videos → GET /v1/videos/{id}</td></tr>",
+  doc_models_hint: "These three are Muse's real capabilities: <b>Muse Spark</b> (language / code), <b>Muse Image</b> (image), <b>Muse Video</b> (video). The muse.ai page is an auto-routing agent with no model picker, so the <code>model</code> field is only for downstream compat — common names like <code>gpt-4o</code>, <code>claude-sonnet-4</code> or <code>dall-e-3</code> auto-map to the matching capability.",
+  doc_chat_h: "2. Chat / code",
+  doc_chat_pre: "<span class=\"cp\" onclick=\"cp(this)\">Copy</span><span class=\"c\"># Non-streaming</span>\ncurl -X POST <span class=\"s\">\"BASE/v1/chat/completions\"</span> \\\n  -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span> \\\n  -H <span class=\"s\">\"Content-Type: application/json\"</span> \\\n  -d <span class=\"s\">'{\"model\":\"muse-spark\",\"messages\":[{\"role\":\"user\",\"content\":\"写一个 Python 快排\"}]}'</span>\n\n<span class=\"c\"># Streaming: add \"stream\":true, returns standard SSE (data: {...} / data: [DONE])</span>",
+  doc_image_h: "3. Image (curl)",
+  doc_image_pre: "<span class=\"cp\" onclick=\"cp(this)\">Copy</span>curl -X POST <span class=\"s\">\"BASE/v1/images/generations\"</span> \\\n  -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span> \\\n  -H <span class=\"s\">\"Content-Type: application/json\"</span> \\\n  -d <span class=\"s\">'{\"prompt\":\"一只戴宇航头盔的柴犬\",\"size\":\"1:1\",\"response_format\":\"url\"}'</span>\n\n<span class=\"c\"># Response</span>\n{<span class=\"k\">\"created\"</span>:1790148495,<span class=\"k\">\"data\"</span>:[{\n  <span class=\"k\">\"revised_prompt\"</span>:<span class=\"s\">\"一只戴宇航头盔的柴犬\"</span>,\n  <span class=\"k\">\"url\"</span>:<span class=\"s\">\"http://your-server:18610/v1/media/xxxx.webp\"</span>,\n  <span class=\"k\">\"kind\"</span>:<span class=\"s\">\"image\"</span>,<span class=\"k\">\"bytes\"</span>:23860}]}\n\n<span class=\"c\"># url is a full absolute URL for downstream rendering / download; /v1/media/* needs no auth.</span>\n<span class=\"c\"># Pass \"response_format\":\"b64_json\" for base64.</span>",
+  doc_video_h: "4. Video (curl, async)",
+  doc_video_pre: "<span class=\"cp\" onclick=\"cp(this)\">Copy</span><span class=\"c\"># 1. Create task</span>\ncurl -X POST <span class=\"s\">\"BASE/v1/videos\"</span> \\\n  -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span> \\\n  -H <span class=\"s\">\"Content-Type: application/json\"</span> \\\n  -d <span class=\"s\">'{\"prompt\":\"一只小猫在草地上走动\",\"duration\":5,\"size\":\"16:9\"}'</span>\n<span class=\"c\"># → {\"id\":\"task_xxx\",\"status\":\"queued\"}</span>\n\n<span class=\"c\"># 2. Poll result</span>\ncurl <span class=\"s\">\"BASE/v1/videos/task_xxx\"</span> -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span>\n<span class=\"c\"># → {\"status\":\"succeeded\",\"result\":{\"url\":\"/v1/media/xxx.mp4\"}}</span>",
+  doc_py_h: "5. Python (openai SDK compatible)",
+  doc_py_pre: "<span class=\"cp\" onclick=\"cp(this)\">Copy</span><span class=\"k\">from</span> openai <span class=\"k\">import</span> OpenAI\n<span class=\"k\">import</span> time\n\nclient = OpenAI(base_url=<span class=\"s\">\"BASE/v1\"</span>, api_key=<span class=\"s\">\"m2a_...\"</span>)\n\n<span class=\"c\"># Image</span>\nr = client.images.generate(model=<span class=\"s\">\"muse-image\"</span>, prompt=<span class=\"s\">\"一只戴宇航头盔的柴犬\"</span>)\n<span class=\"k\">print</span>(r.data[<span class=\"s\">0</span>].url)\n\n<span class=\"c\"># Video (native endpoint, async task)</span>\n<span class=\"k\">import</span> requests\nt = requests.post(<span class=\"s\">\"BASE/v1/videos\"</span>, json={<span class=\"s\">\"prompt\"</span>:<span class=\"s\">\"小猫走动\"</span>,<span class=\"s\">\"duration\"</span>:<span class=\"s\">5</span>},\n                  headers={<span class=\"s\">\"Authorization\"</span>:<span class=\"s\">\"Bearer m2a_...\"</span>}).json()\n<span class=\"k\">while</span> <span class=\"k\">True</span>:\n    s = requests.get(<span class=\"s\">f\"BASE/v1/videos/{t['id']}\"</span>,\n                     headers={<span class=\"s\">\"Authorization\"</span>:<span class=\"s\">\"Bearer m2a_...\"</span>}).json()\n    <span class=\"k\">if</span> s[<span class=\"s\">\"status\"</span>] <span class=\"k\">in</span> (<span class=\"s\">\"succeeded\"</span>,<span class=\"s\">\"failed\"</span>): <span class=\"k\">break</span>\n    time.sleep(<span class=\"s\">5</span>)\n<span class=\"k\">print</span>(s)",
+  doc_admin_h: "6. Admin API",
+  doc_admin_th: "<tr><th>Method</th><th>Path</th><th>Description</th></tr>",
+  doc_admin_rows: "<tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/status</td><td>Service overview + account pool + recent tasks</td></tr><tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/accounts</td><td>Account list</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts</td><td>Add account (single / batch text)</td></tr><tr><td class=\"mono\">PATCH</td><td class=\"mono\">/admin/accounts/{id}</td><td>Rename / enable-disable</td></tr><tr><td class=\"mono\">DELETE</td><td class=\"mono\">/admin/accounts/{id}</td><td>Delete account</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts/{id}/test</td><td>Verify session for real (also refreshes quota)</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts/{id}/quota</td><td>Read remaining quota live</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts/{id}/cookies</td><td>Update account cookies</td></tr><tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/tasks</td><td>Task log</td></tr><tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/media</td><td>Media library list</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/media/delete</td><td>Batch-delete media files</td></tr>",
+  doc_auth_h: "7. Auth",
+  doc_auth_hint: "Except <code>/healthz</code>, <code>/readyz</code> and <code>/v1/media/*</code>, all endpoints require <code>Authorization: Bearer &lt;API Key&gt;</code>. The API key is configured as <code>MUSE2API_KEY</code> in <code>/opt/muse2api/.env</code> on the server.",
+  doc_clients_h: "8. Client integrations",
+  doc_clients_hint: "Any client supporting custom OpenAI-compatible endpoints only needs these three values:",
+  doc_clients_th: "<tr><th>Setting</th><th>Value</th></tr>",
+  doc_clients_rows: "<tr><td>Base URL / API endpoint</td><td class=\"mono\">http://&lt;your-server-IP-or-domain&gt;:18610/v1</td></tr><tr><td>API Key</td><td class=\"mono\">m2a_... (the one under Access Info at the top of this page)</td></tr><tr><td>Model name</td><td class=\"mono\">muse-spark</td></tr>",
+  doc_clients_note: "<b>Any model name works</b>: common names (<code>gpt-4o</code>, <code>gpt-5</code>, <code>claude-sonnet-4</code>, <code>deepseek-chat</code>, <code>gemini-2.5-pro</code>, …) auto-map to the matching capability; totally unknown names pass through untouched — muse.ai routes automatically anyway, results are unaffected.",
+  doc_compat_h: "Compatibility by client type",
+  doc_compat_th: "<tr><th>Client type</th><th>Required capability</th><th>Status</th></tr>",
+  doc_compat_rows: "<tr><td>Chat clients (desktop, Web UI, browser plugins)</td><td class=\"mono\">POST /v1/chat/completions</td><td><span class=\"badge ok\">✅ Available</span></td></tr><tr><td>Streaming output (typewriter effect)</td><td class=\"mono\">stream:true (standard SSE)</td><td><span class=\"badge ok\">✅ Available</span></td></tr><tr><td>Code / inline completion plugins</td><td class=\"mono\">POST /v1/chat/completions</td><td><span class=\"badge ok\">✅ Available</span></td></tr><tr><td>Translation / summary / explanation tools</td><td class=\"mono\">POST /v1/chat/completions</td><td><span class=\"badge ok\">✅ Available</span></td></tr><tr><td>Image clients</td><td class=\"mono\">POST /v1/images/generations</td><td><span class=\"badge ok\">✅ Available</span></td></tr><tr><td>Video generation clients</td><td class=\"mono\">POST /v1/videos (async polling)</td><td><span class=\"badge ok\">✅ Available</span></td></tr><tr><td>Autonomous agent mode requiring tool calls</td><td class=\"mono\">tool_calls / function calling</td><td><span class=\"badge warn\">⚠️ Unavailable</span></td></tr>",
+  doc_toolcall: "<b>About the tool-calling limitation (important, verified):</b><br>The muse.ai web assistant has an explicit alignment policy against emitting pseudo-tool-call JSON — its tested reply: \"I will not output 'pseudo tool calls' in this JSON format — I don't have a get_weather tool\". Tried three different protocol wordings/positions, all failed.<br>So: autonomous <b>agent mode</b> with <code>tool_calls</code> (auto file read/write, command execution) is not supported; but all <b>Q&amp;A-style</b> usage — chat, coding, explanation, translation, summary, image, video — <b>all fully works</b>.<br>If a client sends a <code>tools</code> field anyway, the API won't error: tool declarations are ignored and the request is answered as a normal chat.",
+  doc_footer: "<span>Open-source repo: <a href=\"https://github.com/czg86389-hub/muse2api\" target=\"_blank\" style=\"color:var(--acc);text-decoration:none\">GitHub · muse2api</a></span><span style=\"margin:0 10px\">·</span><span>Community &amp; link: <a href=\"https://linux.do/\" target=\"_blank\" style=\"color:var(--acc);text-decoration:none;font-weight:600\">LINUX DO (https://linux.do/)</a></span>",
   // dynamic
   b_test: "Test", b_keepalive: "Keepalive", b_quota: "Quota", b_quota_ing: "Querying…",
   b_disable: "Disable", b_enable: "Enable", b_rename: "Rename",
@@ -1004,7 +1036,34 @@ zh: {
   dur: "时长(秒)", gen_img: "开始生成图片", gen_vid: "开始生成视频",
   vid_test: "在线生视频测试", vid_hint: "异步任务，一般 60–120 秒完成，页面会自动轮询进度。",
   docs_title: "接入说明",
-  docs_hint: "接口与 OpenAI 风格对齐，下游项目只需改 base_url 和 api_key。BASE URL：",
+  docs_hint: "接口与 OpenAI 风格对齐，下游项目只需改 base_url 和 api_key。<br>BASE URL：<code id=\"dBase\">—</code>",
+  doc_models_h: "1. 可用模型",
+  doc_models_th: "<tr><th>模型 ID</th><th>用途</th><th>接口</th></tr>",
+  doc_models_rows: "<tr><td class=\"mono\">muse-spark</td><td>文本 / 代码对话（支持流式）</td><td class=\"mono\">POST /v1/chat/completions<br>POST /v1/responses</td></tr><tr><td class=\"mono\">muse-image</td><td>文生图 / 图像编辑</td><td class=\"mono\">POST /v1/images/generations</td></tr><tr><td class=\"mono\">muse-video</td><td>文生视频 / 图生视频</td><td class=\"mono\">POST /v1/videos → GET /v1/videos/{id}</td></tr>",
+  doc_models_hint: "这三个就是 Muse 系列的真实能力：<b>Muse Spark</b>（语言 / 代码）、<b>Muse Image</b>（生图）、<b>Muse Video</b>（生视频）。muse.ai 网页是自动路由的 agent、界面没有模型选择器，所以 <code>model</code> 字段只用于兼容下游 —— 传 <code>gpt-4o</code>、<code>claude-sonnet-4</code>、<code>dall-e-3</code> 等常见名字会自动映射到对应能力。",
+  doc_chat_h: "2. 对话 / 写代码",
+  doc_chat_pre: "<span class=\"cp\" onclick=\"cp(this)\">复制</span><span class=\"c\"># 非流式</span>\ncurl -X POST <span class=\"s\">\"BASE/v1/chat/completions\"</span> \\\n  -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span> \\\n  -H <span class=\"s\">\"Content-Type: application/json\"</span> \\\n  -d <span class=\"s\">'{\"model\":\"muse-spark\",\"messages\":[{\"role\":\"user\",\"content\":\"写一个 Python 快排\"}]}'</span>\n\n<span class=\"c\"># 流式：加 \"stream\":true，返回标准 SSE（data: {...} / data: [DONE]）</span>",
+  doc_image_h: "3. 生图（curl）",
+  doc_image_pre: "<span class=\"cp\" onclick=\"cp(this)\">复制</span>curl -X POST <span class=\"s\">\"BASE/v1/images/generations\"</span> \\\n  -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span> \\\n  -H <span class=\"s\">\"Content-Type: application/json\"</span> \\\n  -d <span class=\"s\">'{\"prompt\":\"一只戴宇航头盔的柴犬\",\"size\":\"1:1\",\"response_format\":\"url\"}'</span>\n\n<span class=\"c\"># 返回</span>\n{<span class=\"k\">\"created\"</span>:1790148495,<span class=\"k\">\"data\"</span>:[{\n  <span class=\"k\">\"revised_prompt\"</span>:<span class=\"s\">\"一只戴宇航头盔的柴犬\"</span>,\n  <span class=\"k\">\"url\"</span>:<span class=\"s\">\"http://your-server:18610/v1/media/xxxx.webp\"</span>,\n  <span class=\"k\">\"kind\"</span>:<span class=\"s\">\"image\"</span>,<span class=\"k\">\"bytes\"</span>:23860}]}\n\n<span class=\"c\"># url 是完整绝对地址，可直接给下游渲染 / 下载；/v1/media/* 无需鉴权。</span>\n<span class=\"c\"># 想要 base64 就传 \"response_format\":\"b64_json\"。</span>",
+  doc_video_h: "4. 生视频（curl，异步）",
+  doc_video_pre: "<span class=\"cp\" onclick=\"cp(this)\">复制</span><span class=\"c\"># ① 创建任务</span>\ncurl -X POST <span class=\"s\">\"BASE/v1/videos\"</span> \\\n  -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span> \\\n  -H <span class=\"s\">\"Content-Type: application/json\"</span> \\\n  -d <span class=\"s\">'{\"prompt\":\"一只小猫在草地上走动\",\"duration\":5,\"size\":\"16:9\"}'</span>\n<span class=\"c\"># → {\"id\":\"task_xxx\",\"status\":\"queued\"}</span>\n\n<span class=\"c\"># ② 轮询结果</span>\ncurl <span class=\"s\">\"BASE/v1/videos/task_xxx\"</span> -H <span class=\"s\">\"Authorization: Bearer $MUSE2API_KEY\"</span>\n<span class=\"c\"># → {\"status\":\"succeeded\",\"result\":{\"url\":\"/v1/media/xxx.mp4\"}}</span>",
+  doc_py_h: "5. Python（openai SDK 兼容）",
+  doc_py_pre: "<span class=\"cp\" onclick=\"cp(this)\">复制</span><span class=\"k\">from</span> openai <span class=\"k\">import</span> OpenAI\n<span class=\"k\">import</span> time\n\nclient = OpenAI(base_url=<span class=\"s\">\"BASE/v1\"</span>, api_key=<span class=\"s\">\"m2a_...\"</span>)\n\n<span class=\"c\"># 生图</span>\nr = client.images.generate(model=<span class=\"s\">\"muse-image\"</span>, prompt=<span class=\"s\">\"一只戴宇航头盔的柴犬\"</span>)\n<span class=\"k\">print</span>(r.data[<span class=\"s\">0</span>].url)\n\n<span class=\"c\"># 生视频（走原生接口，因为是异步任务）</span>\n<span class=\"k\">import</span> requests\nt = requests.post(<span class=\"s\">\"BASE/v1/videos\"</span>, json={<span class=\"s\">\"prompt\"</span>:<span class=\"s\">\"小猫走动\"</span>,<span class=\"s\">\"duration\"</span>:<span class=\"s\">5</span>},\n                  headers={<span class=\"s\">\"Authorization\"</span>:<span class=\"s\">\"Bearer m2a_...\"</span>}).json()\n<span class=\"k\">while</span> <span class=\"k\">True</span>:\n    s = requests.get(<span class=\"s\">f\"BASE/v1/videos/{t['id']}\"</span>,\n                     headers={<span class=\"s\">\"Authorization\"</span>:<span class=\"s\">\"Bearer m2a_...\"</span>}).json()\n    <span class=\"k\">if</span> s[<span class=\"s\">\"status\"</span>] <span class=\"k\">in</span> (<span class=\"s\">\"succeeded\"</span>,<span class=\"s\">\"failed\"</span>): <span class=\"k\">break</span>\n    time.sleep(<span class=\"s\">5</span>)\n<span class=\"k\">print</span>(s)",
+  doc_admin_h: "6. 管理接口",
+  doc_admin_th: "<tr><th>方法</th><th>路径</th><th>说明</th></tr>",
+  doc_admin_rows: "<tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/status</td><td>服务总览 + 账号池 + 最近任务</td></tr><tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/accounts</td><td>账号列表</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts</td><td>添加账号（单条 / batch 批量文本）</td></tr><tr><td class=\"mono\">PATCH</td><td class=\"mono\">/admin/accounts/{id}</td><td>改标签 / 启用禁用</td></tr><tr><td class=\"mono\">DELETE</td><td class=\"mono\">/admin/accounts/{id}</td><td>删除账号</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts/{id}/test</td><td>真实校验会话有效性（顺带刷新额度）</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts/{id}/quota</td><td>实时读取该账号剩余额度</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/accounts/{id}/cookies</td><td>更新该账号 cookie</td></tr><tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/tasks</td><td>任务记录</td></tr><tr><td class=\"mono\">GET</td><td class=\"mono\">/admin/media</td><td>媒体库列表</td></tr><tr><td class=\"mono\">POST</td><td class=\"mono\">/admin/media/delete</td><td>批量删除媒体文件</td></tr>",
+  doc_auth_h: "7. 鉴权",
+  doc_auth_hint: "除 <code>/healthz</code>、<code>/readyz</code>、<code>/v1/media/*</code> 外，其余接口均需 <code>Authorization: Bearer &lt;API Key&gt;</code>。API Key 在服务器 <code>/opt/muse2api/.env</code> 的 <code>MUSE2API_KEY</code> 中配置。",
+  doc_clients_h: "8. 接入各类客户端 / 智能体",
+  doc_clients_hint: "凡是支持「自定义 OpenAI 兼容端点」的客户端，都只填三个值就能用：",
+  doc_clients_th: "<tr><th>配置项</th><th>填什么</th></tr>",
+  doc_clients_rows: "<tr><td>Base URL / API 地址</td><td class=\"mono\">http://&lt;你的服务器IP或域名&gt;:18610/v1</td></tr><tr><td>API Key</td><td class=\"mono\">m2a_...（本页顶部「接入信息」里那个）</td></tr><tr><td>模型名</td><td class=\"mono\">muse-spark</td></tr>",
+  doc_clients_note: "<b>模型名随便填也能用</b>：常见名字（<code>gpt-4o</code>、<code>gpt-5</code>、<code>deepseek-chat</code>、<code>gemini-2.5-pro</code> 等）会自动映射到对应能力；完全没见过的名字会原样透传，muse.ai 那边本来就是自动路由，不影响结果。",
+  doc_compat_h: "按客户端类型看能不能用",
+  doc_compat_th: "<tr><th>客户端类型</th><th>依赖能力</th><th>状态</th></tr>",
+  doc_compat_rows: "<tr><td>对话 / 聊天类（桌面端、Web UI、浏览器插件）</td><td class=\"mono\">POST /v1/chat/completions</td><td><span class=\"badge ok\">✅ 可用</span></td></tr><tr><td>流式输出（打字机效果）</td><td class=\"mono\">stream:true（标准 SSE）</td><td><span class=\"badge ok\">✅ 可用</span></td></tr><tr><td>代码补全 / 内联补全插件</td><td class=\"mono\">POST /v1/chat/completions</td><td><span class=\"badge ok\">✅ 可用</span></td></tr><tr><td>翻译 / 总结 / 解释类工具</td><td class=\"mono\">POST /v1/chat/completions</td><td><span class=\"badge ok\">✅ 可用</span></td></tr><tr><td>画图类客户端</td><td class=\"mono\">POST /v1/images/generations</td><td><span class=\"badge ok\">✅ 可用</span></td></tr><tr><td>视频生成客户端</td><td class=\"mono\">POST /v1/videos（异步轮询）</td><td><span class=\"badge ok\">✅ 可用</span></td></tr><tr><td>需要「工具调用」的自主 Agent 模式</td><td class=\"mono\">tool_calls / function calling</td><td><span class=\"badge warn\">⚠️ 不可用</span></td></tr>",
+  doc_toolcall: "<b>关于「工具调用」这条限制（重要，已实测）：</b><br>muse.ai 的网页助手对「输出伪工具调用 JSON」有明确的对齐拒绝策略 —— 实测原话是「我不会按这种 JSON 格式输出'伪工具调用'——我没有 get_weather 这个工具」。用三种不同措辞、不同位置的提示词协议去适配，全部失败。<br>所以：依赖 <code>tool_calls</code> 的<b>自主 Agent 模式</b>（自动读写文件、执行命令那一类）接不了；但所有<b>问答式</b>用法 —— 对话、写代码、解释、翻译、总结、生图、生视频 —— <b>全部完全可用</b>。<br>客户端若强行带上 <code>tools</code> 字段，接口不会报错，会忽略工具声明、按普通对话正常回答。",
+  doc_footer: "<span>开源仓库：<a href=\"https://github.com/czg86389-hub/muse2api\" target=\"_blank\" style=\"color:var(--acc);text-decoration:none\">GitHub · muse2api</a></span><span style=\"margin:0 10px\">·</span><span>社区认可与友情链接：<a href=\"https://linux.do/\" target=\"_blank\" style=\"color:var(--acc);text-decoration:none;font-weight:600\">LINUX DO 社区 (https://linux.do/)</a></span>",
   b_test: "测试", b_keepalive: "保活", b_quota: "额度", b_quota_ing: "查询中…",
   b_disable: "禁用", b_enable: "启用", b_rename: "改名",
   b_update_ck: "更新Cookie", b_delete: "删除", b_del: "删",
