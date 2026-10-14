@@ -113,6 +113,7 @@
   button.danger{background:transparent;border:1px solid rgba(248,113,113,.4);color:var(--bad)}
   button.danger:hover{background:rgba(248,113,113,.12)}
   button.mini{padding:4px 10px;font-size:12px;border-radius:7px}
+  .lang-btn.active{background:var(--accent2);border-color:var(--accent2);color:#fff}
   button.primary-lg{padding:11px 24px;font-size:13.5px}
 
   /* ---------- 表格 ---------- */
@@ -209,7 +210,10 @@
       <span class="pill" id="pAcc"><span class="led"></span><span data-i18n="pill_acc">Accounts</span> <b>—</b></span>
       <span class="pill" id="pBr"><span class="led"></span><span data-i18n="pill_browser">Browser</span> <b>—</b></span>
       <span class="live" id="live"><span class="led"></span><span data-i18n="live">Auto-refresh</span></span>
-      <button class="ghost mini" id="langBtn" onclick="toggleLang()">中文</button>
+      <span style="display:inline-flex;gap:4px;align-items:center">
+        <button class="ghost mini lang-btn" id="langBtnEn" onclick="setLang('en')">EN</button>
+        <button class="ghost mini lang-btn" id="langBtnZh" onclick="setLang('zh')">中文</button>
+      </span>
       <span class="keybox" id="keyBox">
         <span class="lbl" id="keyLbl">API Key</span>
         <input id="key" type="password" data-i18n-ph="key_ph" placeholder="Paste key starting with m2a_" autocomplete="off">
@@ -282,7 +286,7 @@
       <button class="ghost mini" onclick="goTab('cookie')" data-i18n="relogin">Re-login</button>
     </div>
     <div class="card" style="border-color:rgba(79,140,255,.4)">
-      <h3><span data-i18n="conn_info">Connection info</span> <span class="tag" data-i18n="conn_tag">fill these into downstream projects</span></h3>
+      <h3><span data-i18n="conn_info">Access Info</span> <span class="tag" data-i18n="conn_tag">fill these into downstream projects</span></h3>
       <div class="hint" data-i18n="conn_hint">Fill these two values into your project to call the API. BASE URL is the endpoint prefix.</div>
       <div class="row">
         <div style="flex:3">
@@ -309,15 +313,15 @@
     </div>
 
     <div class="stats">
-      <div class="stat b"><div class="k" data-i18n="st_total">Total accounts</div><div class="v" id="sTotal">0</div></div>
+      <div class="stat b"><div class="k" data-i18n="st_total">Total Accounts</div><div class="v" id="sTotal">0</div></div>
       <div class="stat g"><div class="k" data-i18n="st_ok">Available</div><div class="v" id="sOk">0</div></div>
-      <div class="stat r"><div class="k" data-i18n="st_bad">Error</div><div class="v" id="sBad">0</div></div>
+      <div class="stat r"><div class="k" data-i18n="st_bad">Abnormal</div><div class="v" id="sBad">0</div></div>
       <div class="stat y"><div class="k" data-i18n="st_dis">Disabled</div><div class="v" id="sDis">0</div></div>
-      <div class="stat"><div class="k" data-i18n="st_media">Media files</div><div class="v" id="sMedia">0</div></div>
+      <div class="stat"><div class="k" data-i18n="st_media">Media Files</div><div class="v" id="sMedia">0</div></div>
     </div>
 
     <div class="card">
-      <h3><span data-i18n="add_acc">Add accounts</span> <span class="tag" data-i18n="batch_tag">batch supported</span></h3>
+      <h3><span data-i18n="add_acc">Add Account</span> <span class="tag" data-i18n="batch_tag">Support Batch</span></h3>
       <div class="hint" data-i18n="add_hint">
         Paste the Cookie string of muse.ai copied from your browser. Key cookies:
         hatch_sess, hatch_gw, hatch_vml.
@@ -342,11 +346,11 @@
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:10px">
-          <h3 style="margin:0"><span data-i18n="acc_list">Account list</span> <span class="tag" id="poolCount">0</span></h3>
-          <span class="badge ok" id="keepaliveBadge" style="font-size:11px" data-i18n="ka_badge">● Auto keepalive running (30m)</span>
+          <h3 style="margin:0"><span data-i18n="acc_list">Account List</span> <span class="tag" id="poolCount">0</span></h3>
+          <span class="badge ok" id="keepaliveBadge" style="font-size:11px" data-i18n="ka_badge">● Auto Keepalive (30m)</span>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="secondary" id="btnKeepaliveAll" onclick="keepaliveAll()" style="font-size:12px;padding:6px 14px" data-i18n="ka_all">⚡ Keep alive all accounts</button>
+          <button class="secondary" id="btnKeepaliveAll" onclick="keepaliveAll()" style="font-size:12px;padding:6px 14px" data-i18n="ka_all">⚡ One-click Keepalive All Accounts</button>
         </div>
       </div>
       <div class="hint" data-i18n="ka_hint">Background silent keepalive every 30 min with fair multi-account rotation (LRU); "Test" opens muse.ai to verify the session.</div>
@@ -749,7 +753,7 @@ t = requests.post(<span class="s">"BASE/v1/videos"</span>, json={<span class="s"
 
 <script>
 /* ================= i18n (EN default + ZH toggle) ================= */
-const I18N = {
+const i18n = {
 en: {
   title: "muse2api · Account Pool Console",
   logo_sub: "Muse web quota · reverse-proxy API",
@@ -772,20 +776,20 @@ en: {
   tab_pool: "Account Pool", tab_cookie: "Get Cookie", tab_tasks: "Tasks",
   tab_media: "Media", tab_play: "Playground", tab_docs: "Docs",
   relogin: "Re-login",
-  conn_info: "Connection info", conn_tag: "fill these into downstream projects",
+  conn_info: "Access Info", conn_tag: "fill these into downstream projects",
   conn_hint: "Fill these two values into your project to call the API. BASE URL is the endpoint prefix.",
   base_url: "BASE URL (endpoint)", api_key_lbl: "API Key (access secret)",
   copy: "Copy", copy2: "Copy", copy3: "Copy", copy4: "Copy",
   show: "Show", hide: "Hide", regen: "Regenerate",
   model_hint: "Models: muse-spark (chat/code), muse-image (image), muse-video (video). See the Docs tab for full examples.",
-  st_total: "Total accounts", st_ok: "Available", st_bad: "Error", st_dis: "Disabled", st_media: "Media files",
-  add_acc: "Add accounts", batch_tag: "batch supported",
+  st_total: "Total Accounts", st_ok: "Available", st_bad: "Abnormal", st_dis: "Disabled", st_media: "Media Files",
+  add_acc: "Add Account", batch_tag: "Support Batch",
   add_hint: "Paste the Cookie string of muse.ai copied from your browser. Key cookies: hatch_sess, hatch_gw, hatch_vml. One account per line for batch import: label | cookie-string (label optional).",
   acc_label: "Account label (single import)", acc_label_ph: "e.g. muse-main",
   cookie_str: "Cookie string", cookie_ph: "hatch_sess=...; hatch_gw=...; hatch_vml=...",
   import: "Import accounts", import2: "Import accounts", clear: "Clear",
-  acc_list: "Account list", ka_badge: "● Auto keepalive running (30m)",
-  ka_all: "⚡ Keep alive all accounts",
+  acc_list: "Account List", ka_badge: "● Auto Keepalive (30m)",
+  ka_all: "⚡ One-click Keepalive All Accounts",
   ka_hint: "Background silent keepalive every 30 min with fair multi-account rotation (LRU); \"Test\" opens muse.ai to verify the session.",
   th_label: "Label", th_id: "Account ID", th_status: "Status", th_expiry: "Expiry",
   th_quota: "Quota", th_enabled: "Enabled", th_last: "Last used", th_note: "Note", th_ops: "Actions",
@@ -1069,14 +1073,25 @@ zh: {
   q_used_short: "已用 {p}%", q_ago: "查询 ",
   test_quota_err: "；额度读取失败：{e}", test_quota_ok: "；额度已刷新：{p}%"
 }};
-let LANG = localStorage.getItem('muse2api_lang') || 'en';
+let LANG = null;
+try{ LANG = localStorage.getItem('muse2api_lang'); }catch(_){ LANG = null; }
+// First visit (no saved choice): auto-detect browser language (zh* -> Chinese, else English)
+if (!LANG){
+  try{
+    const nav = (navigator.language || navigator.userLanguage || 'en') + '';
+    LANG = nav.toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en';
+  }catch(_){ LANG = 'en'; }
+}
 function T(key, vars){
-  let s = (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key] ?? key;
+  let s = (i18n[LANG] && i18n[LANG][key]) ?? i18n.en[key] ?? key;
   if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
   return s;
 }
 function toggleLang(){
-  LANG = (LANG === 'en') ? 'zh' : 'en';
+  setLang(LANG === 'en' ? 'zh' : 'en');
+}
+function setLang(lang){
+  LANG = (lang === 'zh') ? 'zh' : 'en';
   try{ localStorage.setItem('muse2api_lang', LANG); }catch(_){}
   applyLang();
 }
@@ -1090,13 +1105,16 @@ function applyLang(){
     if (el.id === 'pSvc' || el.id === 'pAcc' || el.id === 'pBr') return;
     // buttons whose labels are set dynamically while busy: only overwrite when idle
     if ((el.id === 'imgBtn' || el.id === 'vidBtn' || el.id === 'btnKeepaliveAll') && el.disabled) return;
-    el.textContent = T(k);
+    el.innerText = (i18n[LANG] && i18n[LANG][k]) || k;
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    el.placeholder = T(el.getAttribute('data-i18n-ph'));
+    const k = el.getAttribute('data-i18n-ph');
+    if (!k) return;
+    el.placeholder = (i18n[LANG] && i18n[LANG][k]) || k;
   });
-  const lb = $('langBtn');
-  if (lb) lb.textContent = (LANG === 'en') ? '中文' : 'EN';
+  const bEn = $('langBtnEn'), bZh = $('langBtnZh');
+  if (bEn) bEn.classList.toggle('active', LANG === 'en');
+  if (bZh) bZh.classList.toggle('active', LANG === 'zh');
   // refresh auth label + key eye without changing logic
   if (typeof authOK !== 'undefined' && authOK !== null && $('keyLbl')){
     $('keyLbl').textContent = authOK ? T('logged_in') : T('key_need');
@@ -1933,7 +1951,7 @@ async function loadStatus(){
 
 function refreshAll(){ loadStatus(); loadPool(); loadApikey(); loadRepoStatus(false); }
 
-applyLang();
+setLang(LANG);
 refreshAll();
 setInterval(() => {
   loadStatus(); loadPool();
