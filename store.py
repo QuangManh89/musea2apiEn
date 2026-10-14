@@ -1,4 +1,4 @@
-"""账号池与任务存储（JSON 落盘，原子写）。"""
+"""Account-pool & task store (atomic JSON writes). / 账号池与任务存储（JSON 落盘，原子写）。"""
 from __future__ import annotations
 
 import json

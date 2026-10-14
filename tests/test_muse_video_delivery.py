@@ -39,7 +39,8 @@ with tempfile.TemporaryDirectory() as profile:
     try:
         engine._wait_attachment("", 60, "video")
     except engine_module.MuseGenerationError as exc:
-        assert "未成功送达" in str(exc)
+        # Bilingual message (EN default, ZH via MUSE2API_LANG=zh) — accept both.
+        assert "未成功送达" in str(exc) or "not delivered" in str(exc).lower()
         assert clock[0] < 32, clock[0]
     else:
         raise AssertionError("undelivered video request waited for the full timeout")

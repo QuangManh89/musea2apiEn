@@ -1,25 +1,33 @@
-"""muse2api — 把 Muse(muse.ai) 网页免费账号的对话/生图/生视频额度反代成 API。
+"""muse2api — proxy Muse (muse.ai) web free-tier chat/image/video quota as API.
+把 Muse(muse.ai) 网页免费账号的对话/生图/生视频额度反代成 API。
 
-OpenAI 兼容:
-  POST /v1/chat/completions          （文本 / 代码对话，支持 stream，可接 Codex）
+OpenAI compatible / OpenAI 兼容:
+  POST /v1/chat/completions          (text/code chat, stream supported, works with Codex)
+                                     （文本 / 代码对话，支持 stream，可接 Codex）
   POST /v1/images/generations
   POST /v1/videos  +  GET /v1/videos/{task_id}
   GET  /v1/models
   GET  /v1/media/{name}
 
-管理（前端账号池管理页面在 GET /）:
+Admin (frontend account-pool page at GET /) / 管理（前端账号池管理页面在 GET /）:
   GET    /admin/status
   GET    /admin/accounts
-  POST   /admin/accounts            （单条 / 批量文本 / 批量数组）
-  PATCH  /admin/accounts/{id}       （改标签、启用/禁用）
+  POST   /admin/accounts            (single / batch text / batch array)
+                                     （单条 / 批量文本 / 批量数组）
+  PATCH  /admin/accounts/{id}       (rename, enable/disable)（改标签、启用/禁用）
   DELETE /admin/accounts/{id}
-  POST   /admin/accounts/{id}/test  （真实打开 muse.ai 验证会话是否有效）
+  POST   /admin/accounts/{id}/test  (open muse.ai for real to verify session)
+                                     （真实打开 muse.ai 验证会话是否有效）
   POST   /admin/accounts/{id}/relogin
-  GET    /admin/tasks               （任务记录）
+  GET    /admin/tasks               (task log)（任务记录）
   DELETE /admin/tasks/{id}  |  POST /admin/tasks/clear
   GET    /admin/media  |  POST /admin/media/delete  |  DELETE /admin/media/{name}
-  GET    /admin/extension           （浏览器扩展 zip，用来取 cookie）
-  GET    /admin/cookie-helper       （命令行取 cookie 脚本，进阶）
+  GET    /admin/extension           (browser extension zip for cookie capture)
+                                     （浏览器扩展 zip，用来取 cookie）
+  GET    /admin/cookie-helper       (CLI cookie script, advanced)
+                                     （命令行取 cookie 脚本，进阶）
+Backend language: MUSE2API_LANG=en (default) | zh. Upstream prompts sent to
+muse.ai stay bilingual on purpose (pure-EN changes model behavior).
 """
 from __future__ import annotations
 
@@ -46,6 +54,7 @@ from pydantic import BaseModel, Field
 
 from config import CFG
 from engine import ESSENTIAL_COOKIES, MuseAuthError, MuseEngine, MuseGenerationError
+from i18n import is_media_only_text_error, t
 from store import Store, account_expiry, min_expiry
 
 import sys
@@ -80,10 +89,8 @@ engine = MuseEngine(CFG)
 
 
 class ConcurrencyLock:
-    """多账号并发调度锁。
-    由 CFG.max_concurrency 限制最大并发槽位；
-    同时提供与标准 Lock 兼容的 acquire / release / locked 接口，
-    确保向下兼容历史单锁断言与管理端操作。"""
+    """Multi-account concurrency gate, capped by CFG.max_concurrency.
+    多账号并发调度锁。 Exposes Lock-compatible acquire/release/locked."""
     def __init__(self, limit: int = 2):
         self.limit = max(1, limit)
         self._sem = threading.Semaphore(self.limit)
@@ -121,7 +128,8 @@ class ConcurrencyLock:
 
 
 class AccountPoolManager:
-    """账号并发冲突管理器：确保同一账号不会同时被两个并发任务操作，多账号则并行执行。"""
+    """Prevent the same account from being used by two concurrent tasks; different accounts run in parallel.
+    账号并发冲突管理器：确保同一账号不会同时被两个并发任务操作，多账号则并行执行。"""
     def __init__(self, store_instance):
         self.store = store_instance
         self.busy_accounts: set[str] = set()
@@ -135,12 +143,12 @@ class AccountPoolManager:
             while True:
                 remaining = deadline - time.monotonic()
                 if remaining <= 0:
-                    raise MuseGenerationError("等待空闲账号超时，当前所有账号均处于繁忙中")
+                    raise MuseGenerationError(t("account_busy_timeout"))
 
                 if account_id:
                     acc = self.store.get_account(account_id)
                     if not acc or not acc.get("enabled", True):
-                        raise MuseAuthError(f"指定账号 {account_id} 不存在或已禁用")
+                        raise MuseAuthError(f"{t('account_disabled')}: {account_id}")
                     if account_id not in self.busy_accounts:
                         self.busy_accounts.add(account_id)
                         return acc
@@ -159,7 +167,7 @@ class AccountPoolManager:
 
                 live = [a for a in self.store.accounts if a.get("enabled", True) and a.get("cookies")]
                 if not live:
-                    raise MuseAuthError("没有可用账号，请先在管理页面导入 cookie")
+                    raise MuseAuthError(t("account_missing"))
 
                 self.cond.wait(timeout=min(remaining, 0.5))
 
@@ -177,10 +185,11 @@ IMAGE_TASK_LOCK = threading.Lock()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+# ------------------------- OpenAI-style error responses -------------------------
+# Most agents read errors via OpenAI's {"error": {"message": ...}} shape;
+# FastAPI defaults to {"detail": ...}, which clients show as "unknown error".
+# So /v1/* is normalized to OpenAI format; admin endpoints keep detail (frontend depends on it).
 # ------------------------- OpenAI 风格的错误响应 -------------------------
-# 各类智能体基本都按 OpenAI 的 {"error": {"message": ...}} 取错误信息；
-# FastAPI 默认返回的是 {"detail": ...}，客户端会读不到原因、只显示"未知错误"。
-# 所以 /v1/* 统一转成 OpenAI 格式，管理接口保持原样（前端依赖 detail）。
 def _err_type(status: int) -> str:
     if status == 404:
         return "not_found_error"
@@ -209,27 +218,28 @@ async def _http_exc(request: Request, exc: HTTPException):
 async def _validation_exc(request: Request, exc: RequestValidationError):
     if request.url.path.startswith("/v1/"):
         return JSONResponse(status_code=422, content={"error": {
-            "message": "请求参数校验失败：" + str(exc.errors())[:400],
+            "message": t("validation_failed") + str(exc.errors())[:400],
             "type": "invalid_request_error", "param": None, "code": 422}})
     return JSONResponse(status_code=422, content={"detail": exc.errors()})
 
 MODELS = [
     {"id": "muse-spark", "object": "model", "owned_by": "muse",
-     "description": "Muse Spark —— 文本 / 代码对话（网页免费额度，支持流式）"},
+     "description": "Muse Spark — text/code chat (web free quota, streaming supported)"},
     {"id": "muse-image", "object": "model", "owned_by": "muse",
-     "description": "Muse Image —— 文生图 / 图像编辑（网页免费额度）"},
+     "description": "Muse Image — text-to-image / image editing (web free quota)"},
     {"id": "muse-video", "object": "model", "owned_by": "muse",
-     "description": "Muse Video —— 文生视频 / 图生视频（网页免费额度）"},
+     "description": "Muse Video — text-to-video / image-to-video (web free quota)"},
 ]
 
-# 下游（Codex / Cline / 各种客户端）习惯按 OpenAI、Anthropic 的名字传模型，
-# 这里统一映射到 muse 的真实能力上。
+# Downstream clients (Codex / Cline / others) tend to send OpenAI/Anthropic model
+# names — mapped here onto Muse's real capabilities. / 下游习惯按 OpenAI、Anthropic 的名字传模型
 #
-# 说明：muse.ai 网页是自动路由的 agent，对外**没有可枚举的模型清单**，
-# 能稳定调用的就是三条真实能力 —— Muse Spark（语言/代码）、
-# Muse Image（生图）、Muse Video（生视频）。别名只是让下游不用改配置。
+# Note: muse.ai web is an auto-routing agent with **no enumerable model list**;
+# the three stable capabilities are Muse Spark (language/code), Muse Image,
+# Muse Video. Aliases just spare downstream config changes.
+# 说明：muse.ai 网页是自动路由的 agent，对外**没有可枚举的模型清单**，别名只是让下游不用改配置。
 MODEL_ALIASES = {
-    # ---- 文本 / 代码 → muse-spark ----
+    # ---- text / code → muse-spark / 文本 / 代码 → muse-spark ----
     "muse-text": "muse-spark", "muse-chat": "muse-spark", "muse-llm": "muse-spark",
     "koda": "muse-spark",
     "gpt-3.5-turbo": "muse-spark", "gpt-4": "muse-spark", "gpt-4-turbo": "muse-spark",
@@ -260,16 +270,16 @@ def resolve_model(name: str | None, default: str = "muse-image") -> str:
     return MODEL_ALIASES.get(n, n or default)
 
 
-# ------------------------- 鉴权 -------------------------
+# ------------------------- Auth / 鉴权 -------------------------
 def auth(authorization: str | None = Header(default=None)):
     if not CFG.api_key:
         return True
     if not authorization or not authorization.lower().startswith("bearer "):
-        raise HTTPException(401, "缺少 Authorization: Bearer <key>")
+        raise HTTPException(401, t("missing_auth"))
     parts = authorization.split(None, 1)
     token = parts[1].strip() if len(parts) > 1 else ""
     if not token or token != CFG.api_key:
-        raise HTTPException(401, "API key 无效")
+        raise HTTPException(401, t("invalid_key"))
     return True
 
 
@@ -856,7 +866,7 @@ def _run_generation(prompt: str, kind: str, timeout: int,
     # Browser ownership covers account selection, retry and cleanup, not just generate().
     deadline = time.monotonic() + max(1, timeout)
     if not GEN_LOCK.acquire(timeout=max(1, timeout)):
-        raise MuseGenerationError("等待浏览器队列超时，请稍后重试")
+        raise MuseGenerationError(t("browser_queue_timeout"))
     try:
         if on_acquired:
             try:
@@ -892,9 +902,9 @@ def _run_generation_locked(prompt: str, kind: str, timeout: int,
     try:
         for attempt in range(2):
             if deadline is not None and time.monotonic() >= deadline:
-                raise MuseGenerationError("任务总等待时限已到，停止重试")
+                raise MuseGenerationError(t("task_deadline"))
             if attempt > 0:
-                if last_exc and "未产出媒体附件，仅返回了文本回复" in str(last_exc):
+                if last_exc and is_media_only_text_error(last_exc):
                     break
                 old_id = cur_acc["id"] if cur_acc else None
                 if old_id:
@@ -917,7 +927,7 @@ def _run_generation_locked(prompt: str, kind: str, timeout: int,
                 engine.start()
                 remaining = int(deadline - time.monotonic()) if deadline is not None else timeout
                 if remaining <= 0:
-                    raise MuseGenerationError("任务总等待时限已到，停止重试")
+                    raise MuseGenerationError(t("task_deadline"))
                 res = engine.generate(cur_acc["cookies"], prompt, expect=kind,
                                       timeout=remaining, expires=cur_acc.get("cookies_exp"),
                                       account_id=cur_acc["id"], on_progress=on_progress,
@@ -1051,7 +1061,7 @@ def create_image_task(req: ImageRequest,
 def get_image_task(task_id: str, _=Depends(auth)):
     task = store.get_task(task_id)
     if not task or task.get("kind") != "image":
-        raise HTTPException(404, "image task 不存在")
+        raise HTTPException(404, t("image_task_missing"))
     out = dict(task)
     if out.get("status") == "completed":
         req = ImageRequest(prompt=out["prompt"], size=out.get("size"),
@@ -1217,7 +1227,7 @@ async def create_video(req: VideoRequest, _=Depends(auth)):
 def get_video(task_id: str, _=Depends(auth)):
     t = store.get_task(task_id)
     if not t:
-        raise HTTPException(404, "task 不存在")
+        raise HTTPException(404, t("video_task_missing"))
     out = dict(t)
     status = out.get("status")
     if status in ("succeeded", "success", "done"):
@@ -1297,7 +1307,7 @@ async def chat_completions(req: ChatRequest, _=Depends(auth)):
     """
     prompt = build_chat_prompt(req.messages) or (req.prompt or "").strip()
     if not prompt:
-        raise HTTPException(400, "messages 为空")
+        raise HTTPException(400, t("messages_empty"))
 
     # 工具调用协议默认不注入 —— 实测 muse.ai 的助手会明确拒绝输出"伪工具调用"，
     # 注入反而污染正常回答；详见 config.py 的 tool_protocol 注释。
@@ -1311,7 +1321,7 @@ async def chat_completions(req: ChatRequest, _=Depends(auth)):
     timeout = int(req.timeout or CFG.chat_timeout)
     acc = store.pick_account(rotate=True, preferred_id=getattr(engine, "current_acc_id", None))
     if not acc:
-        raise HTTPException(400, "没有可用账号，请先在管理页面导入 cookie")
+        raise HTTPException(400, t("account_missing"))
 
     cid = "chatcmpl-" + uuid.uuid4().hex[:24]
     created = int(time.time())
@@ -1467,13 +1477,13 @@ async def responses_api(req: ResponsesRequest, _=Depends(auth)):
     """
     prompt = build_chat_prompt(_responses_messages(req))
     if not prompt:
-        raise HTTPException(400, "input 为空")
+        raise HTTPException(400, t("input_empty"))
 
     model = resolve_model(req.model, default="muse-spark")
     timeout = int(req.timeout or CFG.chat_timeout)
     acc = store.pick_account(rotate=True, preferred_id=getattr(engine, "current_acc_id", None))
     if not acc:
-        raise HTTPException(400, "没有可用账号，请先在管理页面导入 cookie")
+        raise HTTPException(400, t("account_missing"))
 
     rid = "resp_" + uuid.uuid4().hex[:24]
     mid = "msg_" + uuid.uuid4().hex[:24]
@@ -1547,10 +1557,10 @@ async def responses_api(req: ResponsesRequest, _=Depends(auth)):
 @app.get("/v1/media/{name}")
 def get_media(name: str):
     if "/" in name or "\\" in name or ".." in name:
-        raise HTTPException(400, "非法文件名")
+        raise HTTPException(400, t("bad_filename"))
     p = os.path.join(CFG.media_dir, name)
     if not os.path.isfile(p):
-        raise HTTPException(404, "文件不存在")
+        raise HTTPException(404, t("file_missing"))
     return FileResponse(p)
 
 
@@ -1605,7 +1615,7 @@ def add_account(req: AccountRequest, _=Depends(auth)):
                       "expires_at": acc.get("expires_at")})
 
     if not added:
-        raise HTTPException(400, "未解析到任何 cookie，请检查格式")
+        raise HTTPException(400, t("no_cookies_parsed"))
 
     # 只要有一个账号把核心 cookie 凑齐就算通过（批量时按整体判断）
     missing = [n for n in ESSENTIAL_COOKIES
@@ -1620,7 +1630,7 @@ def add_account(req: AccountRequest, _=Depends(auth)):
 def patch_account(aid: str, req: AccountPatch, _=Depends(auth)):
     acc = store.update_account(aid, label=req.label, enabled=req.enabled)
     if not acc:
-        raise HTTPException(404, "账号不存在")
+        raise HTTPException(404, t("account_not_found"))
     return {k: v for k, v in acc.items() if k != "cookies"} | {
         "cookie_count": len(acc.get("cookies", {}))}
 
@@ -1629,7 +1639,7 @@ def patch_account(aid: str, req: AccountPatch, _=Depends(auth)):
 def del_account(aid: str, _=Depends(auth)):
     ok = store.delete_account(aid)
     if not ok:
-        raise HTTPException(404, "账号不存在")
+        raise HTTPException(404, t("account_not_found"))
     return {"deleted": True, "id": aid}
 
 
@@ -1638,9 +1648,9 @@ async def test_account(aid: str, _=Depends(auth)):
     """真实打开 muse.ai 验证该账号 cookie 是否仍可登录。"""
     acc = store.get_account(aid)
     if not acc:
-        raise HTTPException(404, "账号不存在")
+        raise HTTPException(404, t("account_not_found"))
     if not acc.get("cookies"):
-        raise HTTPException(400, "该账号没有 cookie")
+        raise HTTPException(400, t("account_no_cookies"))
 
     def _probe():
         with GEN_LOCK:
@@ -1690,7 +1700,7 @@ def update_cookies(aid: str, payload: dict = Body(...), _=Depends(auth)):
     if payload.get("cookie_header"):
         cookies.update(parse_cookie_text(payload["cookie_header"]))
     if not cookies:
-        raise HTTPException(400, "未解析到 cookie")
+        raise HTTPException(400, t("cookies_not_parsed"))
     exp = {k: int(v) for k, v in (payload.get("expires") or {}).items()
            if _pos(v)}
     # 补入的是「全新会话」的 cookie，有效期估算锚点必须重置到当下，
@@ -1700,7 +1710,7 @@ def update_cookies(aid: str, payload: dict = Body(...), _=Depends(auth)):
                                expiry_anchor=int(time.time()),
                                cookies_exp=exp or None)
     if not acc:
-        raise HTTPException(404, "账号不存在")
+        raise HTTPException(404, t("account_not_found"))
     return {"ok": True, "id": aid, "cookie_count": len(cookies),
             "expires_at": acc.get("expires_at")}
 
@@ -1709,7 +1719,7 @@ def update_cookies(aid: str, payload: dict = Body(...), _=Depends(auth)):
 def relogin(_=Depends(auth)):
     acc = store.pick_account(rotate=True)
     if not acc:
-        raise HTTPException(400, "没有可用账号")
+        raise HTTPException(400, t("no_account_short"))
     try:
         engine.start()
         engine.refresh(acc["cookies"], acc.get("cookies_exp"))
@@ -1729,16 +1739,16 @@ async def query_quota(aid: str, _=Depends(auth)):
     """
     acc = store.get_account(aid)
     if not acc:
-        raise HTTPException(404, "账号不存在")
+        raise HTTPException(404, t("account_not_found"))
     if not acc.get("cookies"):
-        raise HTTPException(400, "该账号没有 cookie")
+        raise HTTPException(400, t("account_no_cookies"))
 
     def _probe():
         with GEN_LOCK:
             engine.start()
             q = engine.quota(acc["cookies"], acc.get("cookies_exp"), account_id=aid)
             if not q.get("found"):
-                raise MuseGenerationError("额度面板未读到有效数据；旧缓存未覆盖")
+                raise MuseGenerationError(t("quota_panel_empty"))
             q["checked_at"] = int(time.time())
             store.update_account(aid, quota=q)
             return q
@@ -1751,7 +1761,7 @@ async def query_quota(aid: str, _=Depends(auth)):
     except MuseGenerationError as exc:
         raise HTTPException(502, str(exc)) from exc
     except Exception as exc:  # noqa: BLE001
-        raise HTTPException(502, f"额度查询失败: {exc}") from exc
+        raise HTTPException(502, t("quota_query_failed") + str(exc)) from exc
 
 
 @app.post("/admin/quota")
@@ -1760,7 +1770,7 @@ async def query_any_quota(_=Depends(auth)):
     通常只有一人使用时够用；多账号时建议按账号查）。"""
     acc = store.pick_account(rotate=True)
     if not acc:
-        raise HTTPException(400, "没有可用账号")
+        raise HTTPException(400, t("no_account_short"))
     return await query_quota(acc["id"], _)
 
 
@@ -1817,7 +1827,7 @@ def cookie_helper(download: int = 0):
     """返回本机取 cookie 的助手脚本（进阶方式，需要装 Python）。"""
     p = os.path.join(BASE_DIR, "tools", "get_muse_cookie.py")
     if not os.path.isfile(p):
-        raise HTTPException(404, "助手脚本缺失")
+        raise HTTPException(404, t("helper_missing"))
     headers = {}
     if download:
         headers["Content-Disposition"] = 'attachment; filename="get_muse_cookie.py"'
@@ -1832,7 +1842,7 @@ def extension_zip():
     """
     src = os.path.join(BASE_DIR, "extension")
     if not os.path.isdir(src):
-        raise HTTPException(404, "扩展目录缺失")
+        raise HTTPException(404, t("ext_dir_missing"))
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
         for name in sorted(os.listdir(src)):
@@ -1853,7 +1863,7 @@ def extension_files():
     """列出扩展目录内容（前端展示用）。"""
     src = os.path.join(BASE_DIR, "extension")
     if not os.path.isdir(src):
-        raise HTTPException(404, "扩展目录缺失")
+        raise HTTPException(404, t("ext_dir_missing"))
     return {"files": sorted(f for f in os.listdir(src)
                             if os.path.isfile(os.path.join(src, f)))}
 
@@ -1867,7 +1877,7 @@ def admin_tasks(limit: int = 50, _=Depends(auth)):
 @app.delete("/admin/tasks/{tid}")
 def del_task(tid: str, _=Depends(auth)):
     if not store.delete_task(tid):
-        raise HTTPException(404, "任务不存在")
+        raise HTTPException(404, t("video_task_missing"))
     return {"deleted": True}
 
 
@@ -1899,7 +1909,7 @@ def delete_media(payload: dict = Body(default={}), _=Depends(auth)):
     if isinstance(names, str):
         names = [names]
     if not isinstance(names, list):
-        raise HTTPException(400, "names 必须是文件名数组")
+        raise HTTPException(400, t("names_must_be_array"))
     d = CFG.media_dir
     removed = 0
     errors = []
@@ -1920,15 +1930,15 @@ def delete_media(payload: dict = Body(default={}), _=Depends(auth)):
 @app.delete("/admin/media/{name}")
 def delete_single_media(name: str, _=Depends(auth)):
     if "/" in name or "\\" in name or ".." in name:
-        raise HTTPException(400, "非法文件名")
+        raise HTTPException(400, t("bad_filename"))
     p = os.path.join(CFG.media_dir, name)
     if not os.path.isfile(p):
-        raise HTTPException(404, "文件不存在")
+        raise HTTPException(404, t("file_missing"))
     try:
         os.remove(p)
         return {"status": "ok", "deleted": name}
     except OSError as e:
-        raise HTTPException(500, f"删除失败: {e}")
+        raise HTTPException(500, t("delete_failed") + str(e))
 
 
 # ------------------------- 前端页面 -------------------------
@@ -1989,7 +1999,7 @@ def _probe_account_sync(aid: str, check_quota: bool = False) -> dict:
                 quota = engine.quota(res["cookies"], res["cookies_exp"],
                                      account_id=aid)
                 if not quota.get("found"):
-                    raise MuseGenerationError("额度面板未读到有效数据；旧缓存未覆盖")
+                    raise MuseGenerationError(t("quota_panel_empty"))
                 quota["checked_at"] = int(time.time())
                 store.update_account(aid, quota=quota)
             except Exception as qe:  # noqa: BLE001
@@ -2343,7 +2353,7 @@ def _upgrade_from_github_sync() -> dict:
             timeout=60,
         )
         if resp.status_code != 200:
-            raise HTTPException(502, f"下载 GitHub 更新包失败 (HTTP {resp.status_code})")
+            raise HTTPException(502, t("update_dl_failed") + f"HTTP {resp.status_code})")
         protected_files = {".env", "data/accounts.json", "data/tasks.json"}
         with tarfile.open(fileobj=io.BytesIO(resp.content), mode="r:gz") as tar:
             for member in tar.getmembers():
@@ -2427,12 +2437,12 @@ async def admin_repo_push(payload: dict = Body(default={}), _=Depends(auth)):
         if st.stdout.strip():
             c_res = _git(["commit", "-m", msg])
             if c_res.returncode != 0:
-                raise HTTPException(500, f"Git commit 失败: {c_res.stderr or c_res.stdout}")
+                raise HTTPException(500, f"Git commit failed: {c_res.stderr or c_res.stdout}")
             committed = True
         p_res = _git(["push", "origin", "HEAD:main"], timeout=60)
         if p_res.returncode != 0:
             err = (p_res.stderr or p_res.stdout or "").strip()
-            raise HTTPException(500, f"Git push 失败: {err[:300]}")
+            raise HTTPException(500, f"Git push failed: {err[:300]}")
         _UPDATE_CACHE["ts"] = 0.0
         status = _check_update_sync(force=True)
         return {

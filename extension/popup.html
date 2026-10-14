@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <style>
@@ -13,6 +13,11 @@
   }
   h1{font-size:15px;margin:0 0 3px;display:flex;align-items:center;gap:7px}
   h1 .dot{width:8px;height:8px;border-radius:50%;background:#4f8cff}
+  h1 .spacer{flex:1}
+  #lang{background:transparent;border:1px solid #30363d;color:#8b949e;
+    font-size:11px;padding:2px 8px;border-radius:6px;cursor:pointer;
+    width:auto;margin:0;line-height:1.6;font-weight:400}
+  #lang:hover{border-color:#4f8cff;color:#e6edf3}
   .sub{color:#8b949e;font-size:11.5px;margin:0 0 14px}
   label{display:block;font-size:11.5px;color:#8b949e;margin:11px 0 4px}
   input{
@@ -41,34 +46,25 @@
 </style>
 </head>
 <body>
-  <h1><span class="dot"></span>Muse2API Cookie 导入</h1>
-  <p class="sub">把当前浏览器里 muse.ai 的登录态，一键同步到你的 muse2api 服务。</p>
+  <h1><span class="dot"></span><span data-i18n="title">Muse2API Cookie Import</span><span class="spacer"></span><button id="lang" title="Switch language / 切换语言">中文</button></h1>
+  <p class="sub" data-i18n="sub">Sync the muse.ai login session from this browser to your muse2api service in one click.</p>
 
-  <label>服务地址（BASE URL）</label>
-  <input id="base" placeholder="http://your-server-ip:18610" spellcheck="false">
+  <label data-i18n="labelBase">Service URL (BASE URL)</label>
+  <input id="base" placeholder="http://your-server-ip:18610" data-i18n-ph="phBase" spellcheck="false">
 
-  <label>API Key</label>
+  <label data-i18n="labelKey">API Key</label>
   <input id="key" placeholder="m2a_..." spellcheck="false">
 
-  <label>账号标签（可留空）</label>
-  <input id="label" placeholder="例如 muse-main" spellcheck="false">
+  <label data-i18n="labelLabel">Account label (optional)</label>
+  <input id="label" placeholder="e.g. muse-main" data-i18n-ph="phLabel" spellcheck="false">
 
-  <button id="go">读取并导入</button>
+  <button id="go" data-i18n="go">Read &amp; Import</button>
 
-  <div class="steps">
-    <b>用之前先确认两件事：</b><br>
-    1. 你已经在<b>这个浏览器</b>里登录了 <a href="https://muse.ai/" target="_blank"
-       style="color:#4f8cff">muse.ai</a>（能看到聊天界面）。<br>
-    2. 上面的服务地址和 API Key 已填好（在 muse2api 管理页「账号池」页顶部可以复制）。
-  </div>
+  <div class="steps" data-i18n-html="steps"></div>
 
   <div id="log"></div>
 
-  <div class="foot">
-    本扩展只做一件事：用浏览器的 <code>chrome.cookies</code> 接口读取 muse.ai 的
-    Cookie（能读到 httpOnly 的那些），POST 到你填的服务地址。
-    不收集、不上传到任何第三方服务器。
-  </div>
+  <div class="foot" data-i18n-html="foot"></div>
 
   <script src="popup.js"></script>
 </body>

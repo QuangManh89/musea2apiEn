@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>muse2api · 账号池控制台</title>
+<title data-i18n="title">muse2api · Account Pool Console</title>
 <style>
   :root{
     --bg:#0a0e17; --bg2:#0e1421; --panel:#121a2b; --panel2:#0f1626;
@@ -192,27 +192,28 @@
 <header>
   <div class="hwrap">
     <div class="logo">
-      <span class="dot"></span>muse2api <small>Muse 网页额度 · 反代 API</small>
+      <span class="dot"></span>muse2api <small data-i18n="logo_sub">Muse web quota · reverse-proxy API</small>
       <a href="https://github.com/czg86389-hub/muse2api" target="_blank" class="pill" style="margin-left:10px;text-decoration:none;color:var(--text);border-color:var(--line2);cursor:pointer" title="打开 GitHub 开源仓库 (https://github.com/czg86389-hub/muse2api)">
         <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" style="vertical-align:-2px"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-        <b>GitHub 仓库</b>
+        <b data-i18n="github_repo">GitHub Repo</b>
       </a>
-      <a href="https://linux.do/" target="_blank" class="pill" style="text-decoration:none;color:var(--text);border-color:var(--line2);cursor:pointer" title="社区认可与友情链接：LINUX DO 社区 (https://linux.do/)">
+      <a href="https://linux.do/" target="_blank" class="pill" style="text-decoration:none;color:var(--text);border-color:var(--line2);cursor:pointer" title="Community endorsement & friendly link: LINUX DO (https://linux.do/)">
         🤝 <b>LINUX DO</b>
       </a>
       <button class="ghost mini" onclick="toggleRepoPanel()" id="btnRepoTop" style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 11px;font-size:12px" title="查看官方仓库最新版本状态与更新通知">
-        📦 <span id="repoTopTxt">版本检测</span>
+        📦 <span id="repoTopTxt" data-i18n="ver_check">Version check</span>
       </button>
     </div>
     <div class="pills">
-      <span class="pill" id="pSvc"><span class="led"></span>服务 <b>—</b></span>
-      <span class="pill" id="pAcc"><span class="led"></span>账号 <b>—</b></span>
-      <span class="pill" id="pBr"><span class="led"></span>浏览器 <b>—</b></span>
-      <span class="live" id="live"><span class="led"></span>自动刷新</span>
+      <span class="pill" id="pSvc"><span class="led"></span><span data-i18n="pill_svc">Service</span> <b>—</b></span>
+      <span class="pill" id="pAcc"><span class="led"></span><span data-i18n="pill_acc">Accounts</span> <b>—</b></span>
+      <span class="pill" id="pBr"><span class="led"></span><span data-i18n="pill_browser">Browser</span> <b>—</b></span>
+      <span class="live" id="live"><span class="led"></span><span data-i18n="live">Auto-refresh</span></span>
+      <button class="ghost mini" id="langBtn" onclick="toggleLang()">中文</button>
       <span class="keybox" id="keyBox">
         <span class="lbl" id="keyLbl">API Key</span>
-        <input id="key" type="password" placeholder="粘贴 m2a_ 开头的密钥" autocomplete="off">
-        <button class="ghost mini" onclick="saveKey()">保存</button>
+        <input id="key" type="password" data-i18n-ph="key_ph" placeholder="Paste key starting with m2a_" autocomplete="off">
+        <button class="ghost mini" onclick="saveKey()" data-i18n="save">Save</button>
       </span>
     </div>
   </div>
@@ -224,15 +225,15 @@
     <div style="display:flex;gap:12px;align-items:flex-start;flex:1;min-width:260px">
       <span class="ic">🔔</span>
       <div>
-        <b style="color:#60a5fa">检测到 muse2api 官方仓库发布了新版本更新！</b>
-        <span id="updBannerVer" class="badge info" style="margin-left:8px">新版本</span><br>
-        <span id="updBannerMsg" style="color:var(--muted);font-size:13px">官方仓库已有新功能或性能优化提交，点击右侧按钮即可一键在线升级（自动保留本地 .env 密钥与账号池数据）。</span>
+        <b style="color:#60a5fa" data-i18n="upd_title">New muse2api release available!</b>
+        <span id="updBannerVer" class="badge info" style="margin-left:8px">New version</span><br>
+        <span id="updBannerMsg" style="color:var(--muted);font-size:13px" data-i18n="upd_msg">The official repo has new features or optimizations. Click the button on the right to upgrade online (keeps local .env keys and pool data).</span>
       </div>
     </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button onclick="upgradeNow()" id="btnBannerUpgrade">⚡ 一键在线升级并重启</button>
-      <button class="ghost mini" onclick="toggleRepoPanel()">查看更新内容</button>
-      <button class="ghost mini" onclick="dismissUpdateBanner()">暂不提醒</button>
+      <button onclick="upgradeNow()" id="btnBannerUpgrade" data-i18n="upgrade_now">⚡ Upgrade & restart now</button>
+      <button class="ghost mini" onclick="toggleRepoPanel()" data-i18n="view_changes">View changes</button>
+      <button class="ghost mini" onclick="dismissUpdateBanner()" data-i18n="dismiss">Dismiss</button>
     </div>
   </div>
 
@@ -240,121 +241,121 @@
   <div class="card" id="repoPanel" style="display:none;border-color:rgba(79,140,255,.45);margin-bottom:16px">
     <h3>
       <svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-      官方仓库版本检测与在线热升级
+      <span data-i18n="repo_title">Official repo version check & online upgrade</span>
       <a href="https://github.com/czg86389-hub/muse2api" target="_blank" class="tag" style="color:var(--accent)">czg86389-hub/muse2api ↗</a>
-      <span id="repoBadge" class="badge info" style="margin-left:auto">检测中…</span>
+      <span id="repoBadge" class="badge info" style="margin-left:auto">Checking…</span>
     </h3>
-    <div class="hint" id="repoStatusDesc">正在实时对比本地版本与 GitHub 官方仓库最新版本…（在线升级自动保留 <code>.env</code> 密钥与 <code>data/</code> 账号池及媒体数据）</div>
+    <div class="hint" id="repoStatusDesc" data-i18n="repo_desc">Comparing local version with the latest GitHub release… (upgrade keeps .env keys and data/ pool + media)</div>
     <div id="repoCommitsBox" style="margin-top:10px;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:10px 14px;font-size:12.5px"></div>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-      <button onclick="upgradeNow()" id="btnRepoPull">⚡ 一键从 GitHub 在线更新并重启</button>
-      <button class="ghost" onclick="loadRepoStatus(true)">🔍 立即重新检测更新</button>
-      <a href="https://github.com/czg86389-hub/muse2api/commits/main" target="_blank" class="btnlike ghostlike" style="padding:7px 13px;font-size:12.5px">查看 GitHub 完整提交记录 ↗</a>
+      <button onclick="upgradeNow()" id="btnRepoPull" data-i18n="upgrade_now2">⚡ Update from GitHub & restart</button>
+      <button class="ghost" onclick="loadRepoStatus(true)" data-i18n="recheck">🔍 Re-check now</button>
+      <a href="https://github.com/czg86389-hub/muse2api/commits/main" target="_blank" class="btnlike ghostlike" style="padding:7px 13px;font-size:12.5px" data-i18n="view_commits">View full commit history on GitHub ↗</a>
     </div>
   </div>
 
   <div class="banner" id="authBanner">
     <span class="ic">🔑</span>
     <div>
-      <b>需要先填入 API Key，页面才能读到数据</b><br>
-      <span style="color:var(--muted)">
-        API Key 是这个服务自己的「访问密码」，用来防止别人白用你的 Muse 账号额度。
-        它<b style="color:var(--text)">不是</b> Muse 的账号密码，是部署时自动生成的一串随机字符（以 <code>m2a_</code> 开头）。<br>
-        把它粘贴到右上角的输入框，点「保存」即可 —— 浏览器会记住，下次不用再输。
+      <b data-i18n="auth_title">Enter your API Key first to load data</b><br>
+      <span style="color:var(--muted)" data-i18n="auth_desc">
+        The API Key is this service's own access password, so others can't drain your Muse quota.
+        It is NOT your Muse login — it's a random string starting with <code>m2a_</code> generated at deploy time.<br>
+        Paste it into the input at the top-right and click "Save" — your browser will remember it.
       </span>
     </div>
   </div>
 
   <nav class="tabs">
-    <button class="active" data-t="pool">账号池</button>
-    <button data-t="cookie">获取 Cookie</button>
-    <button data-t="tasks">任务记录</button>
-    <button data-t="media">媒体库</button>
-    <button data-t="play">接口测试</button>
-    <button data-t="docs">接入文档</button>
+    <button class="active" data-t="pool" data-i18n="tab_pool">Account Pool</button>
+    <button data-t="cookie" data-i18n="tab_cookie">Get Cookie</button>
+    <button data-t="tasks" data-i18n="tab_tasks">Tasks</button>
+    <button data-t="media" data-i18n="tab_media">Media</button>
+    <button data-t="play" data-i18n="tab_play">Playground</button>
+    <button data-t="docs" data-i18n="tab_docs">Docs</button>
   </nav>
 
   <!-- ==================== 账号池 ==================== -->
   <section class="tab active" id="tab-pool">
     <div class="warnbar" id="expWarn" style="display:none">
       <span id="expWarnText"></span>
-      <button class="ghost mini" onclick="goTab('cookie')">去重新登录</button>
+      <button class="ghost mini" onclick="goTab('cookie')" data-i18n="relogin">Re-login</button>
     </div>
     <div class="card" style="border-color:rgba(79,140,255,.4)">
-      <h3>接入信息 <span class="tag">下游项目填这两个值</span></h3>
-      <div class="hint">把下面两项填进你的项目就能调用。BASE URL 就是接口地址前缀。</div>
+      <h3><span data-i18n="conn_info">Connection info</span> <span class="tag" data-i18n="conn_tag">fill these into downstream projects</span></h3>
+      <div class="hint" data-i18n="conn_hint">Fill these two values into your project to call the API. BASE URL is the endpoint prefix.</div>
       <div class="row">
         <div style="flex:3">
-          <label>BASE URL（接口地址）</label>
+          <label data-i18n="base_url">BASE URL (endpoint)</label>
           <div class="copyline">
             <input type="text" id="inBase" readonly>
-            <button class="ghost mini" onclick="copyEl('inBase')">复制</button>
+            <button class="ghost mini" onclick="copyEl('inBase')" data-i18n="copy">Copy</button>
           </div>
         </div>
         <div style="flex:3">
-          <label>API Key（访问密钥）</label>
+          <label data-i18n="api_key_lbl">API Key (access secret)</label>
           <div class="copyline">
             <input type="text" id="inKey" readonly>
-            <button class="ghost mini" onclick="toggleKey()" id="keyEye">显示</button>
-            <button class="ghost mini" onclick="copyKey()">复制</button>
-            <button class="danger mini" onclick="rotateKey()">重新生成</button>
+            <button class="ghost mini" onclick="toggleKey()" id="keyEye" data-i18n="show">Show</button>
+            <button class="ghost mini" onclick="copyKey()" data-i18n="copy2">Copy</button>
+            <button class="danger mini" onclick="rotateKey()" data-i18n="regen">Regenerate</button>
           </div>
         </div>
       </div>
-      <div class="hint" style="margin:11px 0 0">
-        模型名：<code>muse-spark</code>（对话/代码）、<code>muse-image</code>（生图）、<code>muse-video</code>（生视频）。
-        完整调用示例见「接入文档」页签。
+      <div class="hint" style="margin:11px 0 0" data-i18n="model_hint">
+        Models: muse-spark (chat/code), muse-image (image), muse-video (video).
+        See the Docs tab for full examples.
       </div>
     </div>
 
     <div class="stats">
-      <div class="stat b"><div class="k">账号总数</div><div class="v" id="sTotal">0</div></div>
-      <div class="stat g"><div class="k">可用</div><div class="v" id="sOk">0</div></div>
-      <div class="stat r"><div class="k">异常</div><div class="v" id="sBad">0</div></div>
-      <div class="stat y"><div class="k">已禁用</div><div class="v" id="sDis">0</div></div>
-      <div class="stat"><div class="k">媒体文件</div><div class="v" id="sMedia">0</div></div>
+      <div class="stat b"><div class="k" data-i18n="st_total">Total accounts</div><div class="v" id="sTotal">0</div></div>
+      <div class="stat g"><div class="k" data-i18n="st_ok">Available</div><div class="v" id="sOk">0</div></div>
+      <div class="stat r"><div class="k" data-i18n="st_bad">Error</div><div class="v" id="sBad">0</div></div>
+      <div class="stat y"><div class="k" data-i18n="st_dis">Disabled</div><div class="v" id="sDis">0</div></div>
+      <div class="stat"><div class="k" data-i18n="st_media">Media files</div><div class="v" id="sMedia">0</div></div>
     </div>
 
     <div class="card">
-      <h3>添加账号 <span class="tag">支持批量</span></h3>
-      <div class="hint">
-        从浏览器复制 <b>muse.ai</b> 的 Cookie 字符串粘贴进来即可。关键 cookie：
-        <code>hatch_sess</code>、<code>hatch_gw</code>、<code>hatch_vml</code>。
-        批量导入时每行一个账号，格式 <code>标签 | cookie串</code>（标签可省略）。
+      <h3><span data-i18n="add_acc">Add accounts</span> <span class="tag" data-i18n="batch_tag">batch supported</span></h3>
+      <div class="hint" data-i18n="add_hint">
+        Paste the Cookie string of muse.ai copied from your browser. Key cookies:
+        hatch_sess, hatch_gw, hatch_vml.
+        One account per line for batch import: label | cookie-string (label optional).
       </div>
       <div class="row">
         <div style="max-width:230px">
-          <label>账号标签（单条导入用）</label>
-          <input type="text" id="newLabel" placeholder="例如 muse-main">
+          <label data-i18n="acc_label">Account label (single import)</label>
+          <input type="text" id="newLabel" data-i18n-ph="acc_label_ph" placeholder="e.g. muse-main">
         </div>
         <div style="flex:3">
-          <label>Cookie 字符串</label>
-          <textarea id="newCookie" rows="4" placeholder="hatch_sess=...; hatch_gw=...; hatch_vml=...&#10;或批量：&#10;acc-01 | hatch_sess=...; hatch_gw=...&#10;acc-02 | hatch_sess=...; hatch_gw=..."></textarea>
+          <label data-i18n="cookie_str">Cookie string</label>
+          <textarea id="newCookie" rows="4" data-i18n-ph="cookie_ph" placeholder="hatch_sess=...; hatch_gw=...; hatch_vml=..."></textarea>
         </div>
       </div>
       <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
-        <button class="primary-lg" onclick="addAccount(false)">导入账号</button>
-        <button class="ghost" onclick="document.getElementById('newCookie').value='';">清空</button>
+        <button class="primary-lg" onclick="addAccount(false)" data-i18n="import">Import accounts</button>
+        <button class="ghost" onclick="document.getElementById('newCookie').value='';" data-i18n="clear">Clear</button>
       </div>
     </div>
 
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px">
         <div style="display:flex;align-items:center;gap:10px">
-          <h3 style="margin:0">账号列表 <span class="tag" id="poolCount">0</span></h3>
-          <span class="badge ok" id="keepaliveBadge" style="font-size:11px">● 自动保活轮转中 (30m)</span>
+          <h3 style="margin:0"><span data-i18n="acc_list">Account list</span> <span class="tag" id="poolCount">0</span></h3>
+          <span class="badge ok" id="keepaliveBadge" style="font-size:11px" data-i18n="ka_badge">● Auto keepalive running (30m)</span>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="secondary" id="btnKeepaliveAll" onclick="keepaliveAll()" style="font-size:12px;padding:6px 14px">⚡ 一键保活所有账号</button>
+          <button class="secondary" id="btnKeepaliveAll" onclick="keepaliveAll()" style="font-size:12px;padding:6px 14px" data-i18n="ka_all">⚡ Keep alive all accounts</button>
         </div>
       </div>
-      <div class="hint">系统已开启<b>后台每 30 分钟静默保活</b>与<b>多账号公平轮转（LRU）</b>；「测试」会真实打开 muse.ai 验证会话。</div>
+      <div class="hint" data-i18n="ka_hint">Background silent keepalive every 30 min with fair multi-account rotation (LRU); "Test" opens muse.ai to verify the session.</div>
       <div class="tblwrap"><table>
         <thead><tr>
-          <th>标签</th><th>账号 ID</th><th>状态</th><th>有效期</th><th>额度</th><th>启用</th><th>Cookie</th>
-          <th>最后使用</th><th>备注</th><th style="min-width:250px">操作</th>
+          <th data-i18n="th_label">Label</th><th data-i18n="th_id">Account ID</th><th data-i18n="th_status">Status</th><th data-i18n="th_expiry">Expiry</th><th data-i18n="th_quota">Quota</th><th data-i18n="th_enabled">Enabled</th><th>Cookie</th>
+          <th data-i18n="th_last">Last used</th><th data-i18n="th_note">Note</th><th style="min-width:250px" data-i18n="th_ops">Actions</th>
         </tr></thead>
-        <tbody id="poolBody"><tr><td colspan="10" class="empty">加载中…</td></tr></tbody>
+        <tbody id="poolBody"><tr><td colspan="10" class="empty">Loading…</td></tr></tbody>
       </table></div>
     </div>
   </section>
@@ -362,24 +363,21 @@
   <!-- ==================== 获取 Cookie ==================== -->
   <section class="tab" id="tab-cookie">
     <div class="card" style="border-color:rgba(52,211,153,.45)">
-      <h3>方式一：浏览器扩展 <span class="tag">推荐 · 零命令行 · 全平台</span></h3>
-      <div class="hint">
-        用一个浏览器小扩展，把你<b>自己电脑上已经登录好的 muse.ai 登录态</b>同步过来。
-        不用装 Python、不用开终端、不用敲命令。<br>
-        <b>为什么必须用扩展</b>：muse.ai 的 4 条核心 cookie 都带
-        <code>httpOnly</code> 标记，网页脚本（F12 里敲 <code>document.cookie</code>、
-        小书签）读不到；只有浏览器扩展的 <code>cookies</code> 接口能拿到。
+      <h3><span data-i18n="ck1">Option 1: Browser extension</span> <span class="tag" data-i18n="ck1_tag">recommended · no CLI · all platforms</span></h3>
+      <div class="hint" data-i18n="ck1_hint">
+        Use a small browser extension to sync the already-logged-in muse.ai session from your own computer.
+        No Python, no terminal, no commands.
       </div>
 
       <div class="stepbox">
         <div class="stepno">1</div>
         <div>
-          <b>下载并解压扩展</b>
-          <div class="hint" style="margin:4px 0 9px">
-            解压到一个你不会删掉的目录，比如 <code>D:\muse2api-extension</code>。
+          <b data-i18n="dl_ext">Download & unzip the extension</b>
+          <div class="hint" style="margin:4px 0 9px" data-i18n="dl_ext_hint">
+            Unzip to a folder you won't delete, e.g. D:\muse2api-extension.
           </div>
-          <a class="btnlike" href="/admin/extension" download>⬇ 下载 muse2api-extension.zip</a>
-          <button class="ghost mini" onclick="loadExtFiles()">查看包含哪些文件</button>
+          <a class="btnlike" href="/admin/extension" download data-i18n="dl_ext_btn">⬇ Download muse2api-extension.zip</a>
+          <button class="ghost mini" onclick="loadExtFiles()" data-i18n="ext_files">Show included files</button>
           <span class="hint" id="extFiles" style="margin-left:8px"></span>
         </div>
       </div>
@@ -387,9 +385,9 @@
       <div class="stepbox">
         <div class="stepno">2</div>
         <div>
-          <b>在浏览器里加载扩展</b>
-          <div class="hint" style="margin:4px 0 9px">
-            以 Chrome 为例（Edge / Brave / 360 极速 等 Chromium 内核浏览器步骤类似）：
+          <b data-i18n="load_ext">Load the extension in your browser</b>
+          <div class="hint" style="margin:4px 0 9px" data-i18n="load_ext_hint">
+            Chrome example (Edge / Brave and other Chromium browsers are similar):
           </div>
           <ol class="olsteps">
             <li>地址栏输入 <code>chrome://extensions</code> 回车</li>
@@ -403,25 +401,24 @@
       <div class="stepbox">
         <div class="stepno">3</div>
         <div>
-          <b>登录 muse.ai，然后点扩展图标导入</b>
-          <div class="hint" style="margin:4px 0 9px">
-            先在你自己的浏览器里打开 <code>https://muse.ai/</code> 并登录
-            （登录到能看到聊天界面为止），再点浏览器工具栏上的扩展图标，
-            把下面两项填进去，点「读取并导入」。
+          <b data-i18n="login_import">Log in to muse.ai, then import via the extension icon</b>
+          <div class="hint" style="margin:4px 0 9px" data-i18n="login_import_hint">
+            Log in at https://muse.ai/ in your own browser first (until you see the chat UI),
+            then click the extension icon, fill in the two fields below, and import.
           </div>
           <div class="row">
             <div style="flex:3">
-              <label>BASE URL（填进扩展）</label>
+              <label data-i18n="base_for_ext">BASE URL (paste into extension)</label>
               <div class="copyline">
                 <input type="text" id="exBase" readonly>
-                <button class="ghost mini" onclick="copyEl('exBase')">复制</button>
+                <button class="ghost mini" onclick="copyEl('exBase')" data-i18n="copy3">Copy</button>
               </div>
             </div>
             <div style="flex:3">
-              <label>API Key（填进扩展）</label>
+              <label data-i18n="key_for_ext">API Key (paste into extension)</label>
               <div class="copyline">
                 <input type="text" id="exKey" readonly>
-                <button class="ghost mini" onclick="copyExKey()">复制</button>
+                <button class="ghost mini" onclick="copyExKey()" data-i18n="copy4">Copy</button>
               </div>
             </div>
           </div>
@@ -430,11 +427,9 @@
     </div>
 
     <div class="card">
-      <h3>方式二：手动复制 <span class="tag">零安装 · 兜底</span></h3>
-      <div class="hint">
-        不想装扩展的话，可以手动把 cookie 串抠出来。关键是用
-        <b>「网络」面板的请求标头</b>，而不是 Console —— 请求头里的
-        <code>cookie:</code> 一行<b>包含 httpOnly 的那几条</b>，Console 读不到。
+      <h3><span data-i18n="ck2">Option 2: Manual copy</span> <span class="tag" data-i18n="ck2_tag">no install · fallback</span></h3>
+      <div class="hint" data-i18n="ck2_hint">
+        Skip the extension and extract the cookie string manually. Use the request headers in the Network panel, not the Console.
       </div>
       <ol class="olsteps" style="margin-top:10px">
         <li>在你自己的浏览器里打开并登录 <code>https://muse.ai/</code>，停在聊天界面</li>
@@ -453,20 +448,20 @@
     </div>
 
     <div class="card">
-      <h3>方式三：粘贴导入 / 本机脚本 <span class="tag">进阶</span></h3>
-      <div class="hint">已经拿到 cookie 串的话，直接粘在这里导入（方式二手动复制的串也粘这里）。</div>
+      <h3><span data-i18n="ck3">Option 3: Paste import / local script</span> <span class="tag">advanced</span></h3>
+      <div class="hint" data-i18n="ck3_hint">Already have the cookie string? Paste it here to import (manual copies from Option 2 go here too).</div>
       <div class="row" style="margin-top:10px">
         <div style="max-width:230px">
-          <label>账号标签</label>
-          <input type="text" id="mLabel" placeholder="例如 acc-01">
+          <label data-i18n="acc_label2">Account label</label>
+          <input type="text" id="mLabel" data-i18n-ph="acc_label_ph2" placeholder="e.g. acc-01">
         </div>
         <div style="flex:3">
-          <label>Cookie 字符串</label>
+          <label data-i18n="cookie_str2">Cookie string</label>
           <textarea id="mCookie" rows="3" placeholder="hatch_sess=...; hatch_gw=...; hatch_vml=...; hatch_native_auth_device=..."></textarea>
         </div>
       </div>
       <div style="margin-top:12px">
-        <button class="primary-lg" onclick="addAccount(true)">导入账号</button>
+        <button class="primary-lg" onclick="addAccount(true)" data-i18n="import2">Import accounts</button>
       </div>
 
       <div class="hint" style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
@@ -492,9 +487,9 @@
     </div>
 
     <div class="card">
-      <h3>Cookie 有效期说明 <span class="tag">实测</span></h3>
-      <div class="hint" style="margin:0 0 12px">
-        实测 muse.ai 各条 cookie 的有效期（不同账号可能略有差异）：
+      <h3><span data-i18n="ck_exp">Cookie lifetime</span> <span class="tag" data-i18n="measured">measured</span></h3>
+      <div class="hint" style="margin:0 0 12px" data-i18n="ck_exp_hint">
+        Measured lifetime of each muse.ai cookie (may vary slightly per account):
       </div>
       <div class="tblwrap"><table>
         <thead><tr><th>cookie</th><th>httpOnly</th><th>实测有效期</th><th>作用</th></tr></thead>
@@ -525,18 +520,18 @@
   <!-- ==================== 任务记录 ==================== -->
   <section class="tab" id="tab-tasks">
     <div class="card">
-      <h3>生成任务记录 <span class="tag" id="taskCount">0</span></h3>
-      <div class="hint">生视频是异步任务，状态会从 queued → processing → succeeded / failed。</div>
+      <h3><span data-i18n="task_rec">Task history</span> <span class="tag" id="taskCount">0</span></h3>
+      <div class="hint" data-i18n="task_hint">Video generation is async: queued → processing → succeeded / failed.</div>
       <div style="margin-bottom:12px;display:flex;gap:9px">
-        <button class="ghost mini" onclick="loadTasks()">刷新</button>
-        <button class="danger mini" onclick="clearTasks()">清空全部</button>
+        <button class="ghost mini" onclick="loadTasks()" data-i18n="refresh">Refresh</button>
+        <button class="danger mini" onclick="clearTasks()" data-i18n="clear_all">Clear all</button>
       </div>
       <div class="tblwrap"><table>
         <thead><tr>
-          <th>任务 ID</th><th>类型</th><th>提示词</th><th>状态</th>
-          <th>耗时</th><th>创建时间</th><th>结果 / 错误</th><th></th>
+          <th data-i18n="t_id">Task ID</th><th data-i18n="t_type">Type</th><th data-i18n="t_prompt">Prompt</th><th data-i18n="t_status">Status</th>
+          <th data-i18n="t_elapsed">Elapsed</th><th data-i18n="t_created">Created</th><th data-i18n="t_result">Result / error</th><th></th>
         </tr></thead>
-        <tbody id="taskBody"><tr><td colspan="8" class="empty">加载中…</td></tr></tbody>
+        <tbody id="taskBody"><tr><td colspan="8" class="empty">Loading…</td></tr></tbody>
       </table></div>
     </div>
   </section>
@@ -546,46 +541,46 @@
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
         <div>
-          <h3 style="margin:0 0 4px">媒体库 <span class="tag" id="mediaCount">0</span></h3>
-          <div class="hint" style="margin:0">所有已生成并落盘的图片 / 视频，可直接下载或把链接给下游项目使用。</div>
+          <h3 style="margin:0 0 4px"><span data-i18n="media_lib">Media library</span> <span class="tag" id="mediaCount">0</span></h3>
+          <div class="hint" style="margin:0" data-i18n="media_hint">All generated images / videos saved to disk; download directly or hand the links to downstream projects.</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <button class="ghost mini" onclick="loadMedia()">刷新</button>
-          <button class="ghost mini" id="btnSelectAllMedia" onclick="toggleSelectAllMedia()">全选</button>
-          <button class="danger mini" id="btnDelSelectedMedia" onclick="delSelectedMedia()" style="display:none">删除选中 (<span id="selMediaCount">0</span>)</button>
+          <button class="ghost mini" onclick="loadMedia()" data-i18n="refresh2">Refresh</button>
+          <button class="ghost mini" id="btnSelectAllMedia" onclick="toggleSelectAllMedia()" data-i18n="select_all">Select all</button>
+          <button class="danger mini" id="btnDelSelectedMedia" onclick="delSelectedMedia()" style="display:none"><span data-i18n="del_sel">Delete selected</span> (<span id="selMediaCount">0</span>)</button>
         </div>
       </div>
-      <div class="grid" id="mediaGrid"><div class="empty">加载中…</div></div>
+      <div class="grid" id="mediaGrid"><div class="empty">Loading…</div></div>
     </div>
   </section>
 
   <!-- ==================== 接口测试 ==================== -->
   <section class="tab" id="tab-play">
     <div class="card">
-      <h3>在线生图测试 <span class="tag">POST /v1/images/generations</span></h3>
-      <div class="hint">真实调用 muse.ai 生成，图片约 10–30 秒返回。</div>
+      <h3><span data-i18n="img_test">Image test</span> <span class="tag">POST /v1/images/generations</span></h3>
+      <div class="hint" data-i18n="img_hint">Real call to muse.ai; images return in ~10–30s.</div>
       <div class="row">
-        <div style="flex:3"><label>提示词</label>
-          <input type="text" id="imgPrompt" value="一只戴宇航头盔的柴犬，赛博朋克风格，霓虹灯背景"></div>
-        <div style="max-width:140px"><label>比例</label>
+        <div style="flex:3"><label data-i18n="prompt">Prompt</label>
+          <input type="text" id="imgPrompt" value="A Shiba Inu wearing an astronaut helmet, cyberpunk style, neon background"></div>
+        <div style="max-width:140px"><label data-i18n="ratio">Ratio</label>
           <select id="imgSize"><option>1:1</option><option>16:9</option><option>9:16</option><option>4:3</option><option>3:4</option></select></div>
       </div>
-      <div style="margin-top:12px"><button class="primary-lg" id="imgBtn" onclick="runImage()">开始生成图片</button></div>
+      <div style="margin-top:12px"><button class="primary-lg" id="imgBtn" onclick="runImage()" data-i18n="gen_img">Start image generation</button></div>
       <div class="result" id="imgRes"></div>
     </div>
 
     <div class="card">
-      <h3>在线生视频测试 <span class="tag">POST /v1/videos</span></h3>
-      <div class="hint">异步任务，一般 60–120 秒完成，页面会自动轮询进度。</div>
+      <h3><span data-i18n="vid_test">Video test</span> <span class="tag">POST /v1/videos</span></h3>
+      <div class="hint" data-i18n="vid_hint">Async task, usually done in 60–120s; the page polls automatically.</div>
       <div class="row">
-        <div style="flex:3"><label>提示词</label>
-          <input type="text" id="vidPrompt" value="一只橙色小猫在草地上慢慢走动，阳光明媚"></div>
-        <div style="max-width:110px"><label>时长(秒)</label>
+        <div style="flex:3"><label data-i18n="prompt2">Prompt</label>
+          <input type="text" id="vidPrompt" value="An orange kitten walking slowly on grass, bright sunshine"></div>
+        <div style="max-width:110px"><label data-i18n="dur">Duration (s)</label>
           <input type="number" id="vidDur" value="5" min="1" max="30"></div>
-        <div style="max-width:140px"><label>比例</label>
+        <div style="max-width:140px"><label data-i18n="ratio2">Ratio</label>
           <select id="vidSize"><option>16:9</option><option>9:16</option><option>1:1</option></select></div>
       </div>
-      <div style="margin-top:12px"><button class="primary-lg" id="vidBtn" onclick="runVideo()">开始生成视频</button></div>
+      <div style="margin-top:12px"><button class="primary-lg" id="vidBtn" onclick="runVideo()" data-i18n="gen_vid">Start video generation</button></div>
       <div class="result" id="vidRes"></div>
     </div>
   </section>
@@ -593,10 +588,10 @@
   <!-- ==================== 接入文档 ==================== -->
   <section class="tab" id="tab-docs">
     <div class="card doc">
-      <h3>接入说明</h3>
-      <div class="hint">
-        接口与 OpenAI 风格对齐，下游项目只需改 <code>base_url</code> 和 <code>api_key</code>。
-        <br>BASE URL：<code id="dBase">—</code>
+      <h3 data-i18n="docs_title">Integration guide</h3>
+      <div class="hint" data-i18n="docs_hint">
+        OpenAI-style endpoints: downstream projects only change base_url and api_key.
+        <br>BASE URL: <code id="dBase">—</code>
       </div>
 
       <h4>1. 可用模型</h4>
@@ -753,6 +748,375 @@ t = requests.post(<span class="s">"BASE/v1/videos"</span>, json={<span class="s"
 <div id="toasts"></div>
 
 <script>
+/* ================= i18n (EN default + ZH toggle) ================= */
+const I18N = {
+en: {
+  title: "muse2api · Account Pool Console",
+  logo_sub: "Muse web quota · reverse-proxy API",
+  github_repo: "GitHub Repo",
+  ver_check: "Version check",
+  pill_svc: "Service", pill_acc: "Accounts", pill_browser: "Browser",
+  live: "Auto-refresh", save: "Save",
+  key_ph: "Paste key starting with m2a_",
+  key_need: "API Key required", logged_in: "✓ Logged in",
+  svc_ok: "Normal", svc_login: "Login needed", br_on: "Running", br_off: "Idle",
+  upd_title: "New muse2api release available!",
+  upd_msg: "The official repo has new features or optimizations. Click the button on the right to upgrade online (keeps local .env keys and pool data).",
+  upgrade_now: "⚡ Upgrade & restart now", view_changes: "View changes", dismiss: "Dismiss",
+  repo_title: "Official repo version check & online upgrade",
+  repo_desc: "Comparing local version with the latest GitHub release… (upgrade keeps .env keys and data/ pool + media)",
+  upgrade_now2: "⚡ Update from GitHub & restart", recheck: "🔍 Re-check now",
+  view_commits: "View full commit history on GitHub ↗",
+  auth_title: "Enter your API Key first to load data",
+  auth_desc: "The API Key is this service's own access password, so others can't drain your Muse quota. It is NOT your Muse login — it's a random string starting with m2a_ generated at deploy time. Paste it into the input at the top-right and click \"Save\" — your browser will remember it.",
+  tab_pool: "Account Pool", tab_cookie: "Get Cookie", tab_tasks: "Tasks",
+  tab_media: "Media", tab_play: "Playground", tab_docs: "Docs",
+  relogin: "Re-login",
+  conn_info: "Connection info", conn_tag: "fill these into downstream projects",
+  conn_hint: "Fill these two values into your project to call the API. BASE URL is the endpoint prefix.",
+  base_url: "BASE URL (endpoint)", api_key_lbl: "API Key (access secret)",
+  copy: "Copy", copy2: "Copy", copy3: "Copy", copy4: "Copy",
+  show: "Show", hide: "Hide", regen: "Regenerate",
+  model_hint: "Models: muse-spark (chat/code), muse-image (image), muse-video (video). See the Docs tab for full examples.",
+  st_total: "Total accounts", st_ok: "Available", st_bad: "Error", st_dis: "Disabled", st_media: "Media files",
+  add_acc: "Add accounts", batch_tag: "batch supported",
+  add_hint: "Paste the Cookie string of muse.ai copied from your browser. Key cookies: hatch_sess, hatch_gw, hatch_vml. One account per line for batch import: label | cookie-string (label optional).",
+  acc_label: "Account label (single import)", acc_label_ph: "e.g. muse-main",
+  cookie_str: "Cookie string", cookie_ph: "hatch_sess=...; hatch_gw=...; hatch_vml=...",
+  import: "Import accounts", import2: "Import accounts", clear: "Clear",
+  acc_list: "Account list", ka_badge: "● Auto keepalive running (30m)",
+  ka_all: "⚡ Keep alive all accounts",
+  ka_hint: "Background silent keepalive every 30 min with fair multi-account rotation (LRU); \"Test\" opens muse.ai to verify the session.",
+  th_label: "Label", th_id: "Account ID", th_status: "Status", th_expiry: "Expiry",
+  th_quota: "Quota", th_enabled: "Enabled", th_last: "Last used", th_note: "Note", th_ops: "Actions",
+  ck1: "Option 1: Browser extension", ck1_tag: "recommended · no CLI · all platforms",
+  ck1_hint: "Use a small browser extension to sync the already-logged-in muse.ai session from your own computer. No Python, no terminal, no commands.",
+  dl_ext: "Download & unzip the extension",
+  dl_ext_hint: "Unzip to a folder you won't delete, e.g. D:\\muse2api-extension.",
+  dl_ext_btn: "⬇ Download muse2api-extension.zip", ext_files: "Show included files",
+  load_ext: "Load the extension in your browser",
+  load_ext_hint: "Chrome example (Edge / Brave and other Chromium browsers are similar):",
+  login_import: "Log in to muse.ai, then import via the extension icon",
+  login_import_hint: "Log in at https://muse.ai/ in your own browser first (until you see the chat UI), then click the extension icon, fill in the two fields below, and import.",
+  base_for_ext: "BASE URL (paste into extension)", key_for_ext: "API Key (paste into extension)",
+  ck2: "Option 2: Manual copy", ck2_tag: "no install · fallback",
+  ck2_hint: "Skip the extension and extract the cookie string manually. Use the request headers in the Network panel, not the Console.",
+  ck3: "Option 3: Paste import / local script",
+  ck3_hint: "Already have the cookie string? Paste it here to import (manual copies from Option 2 go here too).",
+  acc_label2: "Account label", acc_label_ph2: "e.g. acc-01", cookie_str2: "Cookie string",
+  ck_exp: "Cookie lifetime", measured: "measured",
+  ck_exp_hint: "Measured lifetime of each muse.ai cookie (may vary slightly per account):",
+  task_rec: "Task history", task_hint: "Video generation is async: queued → processing → succeeded / failed.",
+  refresh: "Refresh", refresh2: "Refresh", clear_all: "Clear all",
+  t_id: "Task ID", t_type: "Type", t_prompt: "Prompt", t_status: "Status",
+  t_elapsed: "Elapsed", t_created: "Created", t_result: "Result / error",
+  media_lib: "Media library",
+  media_hint: "All generated images / videos saved to disk; download directly or hand the links to downstream projects.",
+  select_all: "Select all", deselect_all: "Deselect all", del_sel: "Delete selected",
+  img_test: "Image test", img_hint: "Real call to muse.ai; images return in ~10–30s.",
+  prompt: "Prompt", prompt2: "Prompt", ratio: "Ratio", ratio2: "Ratio",
+  dur: "Duration (s)", gen_img: "Start image generation", gen_vid: "Start video generation",
+  vid_test: "Video test", vid_hint: "Async task, usually done in 60–120s; the page polls automatically.",
+  docs_title: "Integration guide",
+  docs_hint: "OpenAI-style endpoints: downstream projects only change base_url and api_key. BASE URL: ",
+  // dynamic
+  b_test: "Test", b_keepalive: "Keepalive", b_quota: "Quota", b_quota_ing: "Querying…",
+  b_disable: "Disable", b_enable: "Enable", b_rename: "Rename",
+  b_update_ck: "Update Cookie", b_delete: "Delete", b_del: "Delete",
+  b_open: "Open", b_download: "Download",
+  st_available: "● Available", st_error: "● Error", st_unchecked: "○ Unchecked",
+  st_disabled: "Disabled", st_on: "On", st_off: "Off",
+  badge_unknown: "Unknown", badge_unchecked: "Unchecked",
+  badge_expired: "Expired", badge_left_days: "left", badge_left_hours: "left",
+  badge_day: "d", badge_hour: "h",
+  badge_missing: "Missing core", badge_video: "Video", badge_image: "Image",
+  empty_pool: "No accounts yet. Go to the \"Get Cookie\" tab and import one in 3 steps.",
+  empty_pool_key: "🔑 Enter your API Key at the top-right and click \"Save\" first",
+  empty_tasks: "No task records", empty_media: "No media files generated yet",
+  load_fail: "Load failed: ",
+  toast_key_cleared: "API Key cleared", toast_key_saved: "API Key saved in this browser; auto-filled next time",
+  toast_copied: "Copied", toast_copy_fail: "Copy failed, please select manually",
+  toast_nothing: "Nothing to copy",
+  toast_no_cookie: "Paste the Cookie first",
+  toast_import_ok: "Imported {n} account(s)", toast_import_fail: "Import failed: ",
+  toast_testing: "Verifying session on muse.ai…",
+  toast_ka_one: "Running silent session renewal for this account…",
+  toast_ka_ok: "✓ Keepalive succeeded, expiry updated",
+  toast_ka_fail: "✗ Keepalive failed: ",
+  toast_ka_all: "Waking headless browser for silent keepalive…",
+  toast_ka_busy: "Keepalive task already running, please wait",
+  toast_ka_all_ok: "✓ Kept alive {a} account(s), skipped {s}",
+  toast_ka_all_fail: "Keepalive failed: ",
+  toast_enabled: "Enabled", toast_disabled: "Disabled", toast_op_fail: "Operation failed: ",
+  toast_label_ok: "Label updated", toast_rename_fail: "Rename failed: ",
+  toast_ck_ok: "Cookie updated ({n} entries)", toast_ck_fail: "Update failed: ",
+  toast_deleted: "Deleted", toast_del_fail: "Delete failed: ",
+  toast_quota_ok: "Quota: {p}, weekly used {u}%{e}",
+  toast_quota_extra: ", extra left {e}",
+  toast_quota_none: "No quota data on the settings panel (page structure may have changed)",
+  toast_quota_fail: "Quota query failed: ",
+  toast_test_fail: "Test failed: ",
+  toast_need_prompt: "Enter a prompt first",
+  toast_sel_media: "Select media files to delete first",
+  toast_del_ok: "Deleted", toast_del_done: "Deleted {n} file(s)",
+  toast_del_none: "File missing or already deleted",
+  toast_del_fail: "Delete failed: ", toast_bdel_fail: "Batch delete failed: ",
+  toast_cleared_n: "Cleared {n} record(s)", toast_clear_fail: "Clear failed: ",
+  toast_gen_ok: "✓ Success", toast_gen_fail: "✗ Failed",
+  toast_gen_img_btn: "Start image generation", toast_gen_vid_btn: "Start video generation",
+  toast_new_key: "New Key generated and active; this page already updated",
+  toast_rotate_fail: "Rotation failed: ",
+  cf_rotate: "Regenerate API Key?\n\nThe old Key stops working immediately; update downstream projects or they will get 401.",
+  cf_del_acc: "Delete account \"{l}\"? This cannot be undone.",
+  cf_clear_tasks: "Clear all task records? (Generated media files are kept.)",
+  cf_del_media: "Delete media file \"{n}\"? This cannot be undone.",
+  cf_del_media_n: "Permanently delete the selected {n} media file(s)? This cannot be undone.",
+  cf_upgrade: "Pull latest code from GitHub (czg86389-hub/muse2api) and restart now?\n\n(Local .env keys, pool cookies and media files are all kept.)",
+  prompt_new_label: "New account label:",
+  prompt_new_cookie: "Paste the latest Cookie string for this account:",
+  ago_never: "Never", ago_s: "s ago", ago_m: "m ago", ago_h: "h ago", ago_d: "d ago",
+  auth_401: "API Key missing or wrong",
+  ext_loading: "Loading…", ext_includes: "Includes {n} file(s): ", ext_empty: "(extension dir empty, check deployment)",
+  cmd_need_key: "(Enter your API Key at the top-right first; the full command will appear here)",
+  exp_dead: "account(s) expired", exp_soon_n: "{n} more expiring soon ({names})",
+  exp_relogin: "Expired accounts can't generate. Please re-login once (~30s).",
+  exp_12h: "expires in under 12h. muse.ai sessions last ~2 days and aren't extended by use — re-login now to avoid failures.",
+  view_result: "View result",
+  gen_ing: "Generating…", img_submitting: "Submitting image task, polling status…",
+  img_timeout: "Waited over 15 min — check Task history for the result, don't resubmit",
+  img_waiting: "Task {id} · {st} · waited {s}s",
+  img_poll_fail: "Status polling keeps failing — check Task history, don't resubmit",
+  vid_creating: "Creating video task…",
+  vid_waiting: "Task {st} · waited {s}s (video usually takes 60–120s)…",
+  vid_create_fail: "Task creation failed",
+  repo_new: "🔔 New version {v} ({sha})", repo_new_short: "New update ({sha})",
+  repo_old: "old", repo_latest: "latest",
+  repo_latest_msg: "Latest commit: ", repo_default_msg: "perf & feature updates",
+  repo_click_upgrade: "Click \"⚡ Upgrade\" on the right to pull it (keeps config & data).",
+  repo_toast_new: "🔔 New official update ({sha}): {msg}",
+  repo_click_top: "click Upgrade at the top",
+  repo_uptodate: "✓ Latest {v} ({sha})", repo_uptodate_short: "latest",
+  repo_deployed: "Deployed: ", repo_remote: "GitHub latest: ",
+  repo_highlights: "✨ Highlights ({v}):", repo_recent: "📜 Recent commits:",
+  repo_no_commits: "No commit records",
+  repo_toast_found: "🔔 New version found!", repo_toast_latest: "✓ Already the latest official version",
+  repo_pending: "Login needed",
+  upg_updating: "Updating online…",
+  upg_done_default: "Update done", upg_done: "; restarting, page will auto-refresh when ready…",
+  upg_fail: "Online update failed: ",
+  q_plan: "Plan: ", q_reset: "Weekly reset: ", q_used: "Weekly used {p}%",
+  q_extra: "Extra tokens: {e} left (used {u}%)",
+  q_checked: "Checked: ", q_stale: "Quota data is over 1h old, please re-query",
+  q_used_short: "used {p}%", q_ago: "checked ",
+  test_quota_err: "; quota read failed: {e}", test_quota_ok: "; quota refreshed: {p}%"
+},
+zh: {
+  title: "muse2api · 账号池控制台",
+  logo_sub: "Muse 网页额度 · 反代 API",
+  github_repo: "GitHub 仓库",
+  ver_check: "版本检测",
+  pill_svc: "服务", pill_acc: "账号", pill_browser: "浏览器",
+  live: "自动刷新", save: "保存",
+  key_ph: "粘贴 m2a_ 开头的密钥",
+  key_need: "API Key 必填", logged_in: "✓ 已登录",
+  svc_ok: "正常", svc_login: "待登录", br_on: "运行中", br_off: "空闲",
+  upd_title: "检测到 muse2api 官方仓库发布了新版本更新！",
+  upd_msg: "官方仓库已有新功能或性能优化提交，点击右侧按钮即可一键在线升级（自动保留本地 .env 密钥与账号池数据）。",
+  upgrade_now: "⚡ 一键在线升级并重启", view_changes: "查看更新内容", dismiss: "暂不提醒",
+  repo_title: "官方仓库版本检测与在线热升级",
+  repo_desc: "正在实时对比本地版本与 GitHub 官方仓库最新版本…（在线升级自动保留 .env 密钥与 data/ 账号池及媒体数据）",
+  upgrade_now2: "⚡ 一键从 GitHub 在线更新并重启", recheck: "🔍 立即重新检测更新",
+  view_commits: "查看 GitHub 完整提交记录 ↗",
+  auth_title: "需要先填入 API Key，页面才能读到数据",
+  auth_desc: "API Key 是这个服务自己的「访问密码」，用来防止别人白用你的 Muse 账号额度。它不是 Muse 的账号密码，是部署时自动生成的一串随机字符（以 m2a_ 开头）。把它粘贴到右上角的输入框，点「保存」即可 —— 浏览器会记住，下次不用再输。",
+  tab_pool: "账号池", tab_cookie: "获取 Cookie", tab_tasks: "任务记录",
+  tab_media: "媒体库", tab_play: "接口测试", tab_docs: "接入文档",
+  relogin: "去重新登录",
+  conn_info: "接入信息", conn_tag: "下游项目填这两个值",
+  conn_hint: "把下面两项填进你的项目就能调用。BASE URL 就是接口地址前缀。",
+  base_url: "BASE URL（接口地址）", api_key_lbl: "API Key（访问密钥）",
+  copy: "复制", copy2: "复制", copy3: "复制", copy4: "复制",
+  show: "显示", hide: "隐藏", regen: "重新生成",
+  model_hint: "模型名：muse-spark（对话/代码）、muse-image（生图）、muse-video（生视频）。完整调用示例见「接入文档」页签。",
+  st_total: "账号总数", st_ok: "可用", st_bad: "异常", st_dis: "已禁用", st_media: "媒体文件",
+  add_acc: "添加账号", batch_tag: "支持批量",
+  add_hint: "从浏览器复制 muse.ai 的 Cookie 字符串粘贴进来即可。关键 cookie：hatch_sess、hatch_gw、hatch_vml。批量导入时每行一个账号，格式 标签 | cookie串（标签可省略）。",
+  acc_label: "账号标签（单条导入用）", acc_label_ph: "例如 muse-main",
+  cookie_str: "Cookie 字符串", cookie_ph: "hatch_sess=...; hatch_gw=...; hatch_vml=...",
+  import: "导入账号", import2: "导入账号", clear: "清空",
+  acc_list: "账号列表", ka_badge: "● 自动保活轮转中 (30m)",
+  ka_all: "⚡ 一键保活所有账号",
+  ka_hint: "系统已开启后台每 30 分钟静默保活与多账号公平轮转（LRU）；「测试」会真实打开 muse.ai 验证会话。",
+  th_label: "标签", th_id: "账号 ID", th_status: "状态", th_expiry: "有效期",
+  th_quota: "额度", th_enabled: "启用", th_last: "最后使用", th_note: "备注", th_ops: "操作",
+  ck1: "方式一：浏览器扩展", ck1_tag: "推荐 · 零命令行 · 全平台",
+  ck1_hint: "用一个浏览器小扩展，把你自己电脑上已经登录好的 muse.ai 登录态同步过来。不用装 Python、不用开终端、不用敲命令。",
+  dl_ext: "下载并解压扩展",
+  dl_ext_hint: "解压到一个你不会删掉的目录，比如 D:\\muse2api-extension。",
+  dl_ext_btn: "⬇ 下载 muse2api-extension.zip", ext_files: "查看包含哪些文件",
+  load_ext: "在浏览器里加载扩展",
+  load_ext_hint: "以 Chrome 为例（Edge / Brave 等 Chromium 内核浏览器步骤类似）：",
+  login_import: "登录 muse.ai，然后点扩展图标导入",
+  login_import_hint: "先在你自己的浏览器里打开 https://muse.ai/ 并登录（登录到能看到聊天界面为止），再点浏览器工具栏上的扩展图标，把下面两项填进去，点「读取并导入」。",
+  base_for_ext: "BASE URL（填进扩展）", key_for_ext: "API Key（填进扩展）",
+  ck2: "方式二：手动复制", ck2_tag: "零安装 · 兜底",
+  ck2_hint: "不想装扩展的话，可以手动把 cookie 串抠出来。关键是用「网络」面板的请求标头，而不是 Console。",
+  ck3: "方式三：粘贴导入 / 本机脚本",
+  ck3_hint: "已经拿到 cookie 串的话，直接粘在这里导入（方式二手动复制的串也粘这里）。",
+  acc_label2: "账号标签", acc_label_ph2: "例如 acc-01", cookie_str2: "Cookie 字符串",
+  ck_exp: "Cookie 有效期说明", measured: "实测",
+  ck_exp_hint: "实测 muse.ai 各条 cookie 的有效期（不同账号可能略有差异）：",
+  task_rec: "生成任务记录", task_hint: "生视频是异步任务，状态会从 queued → processing → succeeded / failed。",
+  refresh: "刷新", refresh2: "刷新", clear_all: "清空全部",
+  t_id: "任务 ID", t_type: "类型", t_prompt: "提示词", t_status: "状态",
+  t_elapsed: "耗时", t_created: "创建时间", t_result: "结果 / 错误",
+  media_lib: "媒体库",
+  media_hint: "所有已生成并落盘的图片 / 视频，可直接下载或把链接给下游项目使用。",
+  select_all: "全选", deselect_all: "取消全选", del_sel: "删除选中",
+  img_test: "在线生图测试", img_hint: "真实调用 muse.ai 生成，图片约 10–30 秒返回。",
+  prompt: "提示词", prompt2: "提示词", ratio: "比例", ratio2: "比例",
+  dur: "时长(秒)", gen_img: "开始生成图片", gen_vid: "开始生成视频",
+  vid_test: "在线生视频测试", vid_hint: "异步任务，一般 60–120 秒完成，页面会自动轮询进度。",
+  docs_title: "接入说明",
+  docs_hint: "接口与 OpenAI 风格对齐，下游项目只需改 base_url 和 api_key。BASE URL：",
+  b_test: "测试", b_keepalive: "保活", b_quota: "额度", b_quota_ing: "查询中…",
+  b_disable: "禁用", b_enable: "启用", b_rename: "改名",
+  b_update_ck: "更新Cookie", b_delete: "删除", b_del: "删",
+  b_open: "打开", b_download: "下载",
+  st_available: "● 可用", st_error: "● 异常", st_unchecked: "○ 未检测",
+  st_disabled: "已禁用", st_on: "开", st_off: "关",
+  badge_unknown: "未知", badge_unchecked: "未查",
+  badge_expired: "已过期", badge_left_days: "剩", badge_left_hours: "剩",
+  badge_day: " 天", badge_hour: " 小时",
+  badge_missing: "缺核心", badge_video: "视频", badge_image: "图片",
+  empty_pool: "还没有账号。去「获取 Cookie」页签按三步导入一个",
+  empty_pool_key: "🔑 请先在右上角填入 API Key 并点「保存」",
+  empty_tasks: "暂无任务记录", empty_media: "还没有生成任何媒体文件",
+  load_fail: "加载失败：",
+  toast_key_cleared: "已清除 API Key", toast_key_saved: "API Key 已保存到本机浏览器，下次打开自动带上",
+  toast_copied: "已复制到剪贴板", toast_copy_fail: "复制失败，请手动选中复制",
+  toast_nothing: "没有可复制的内容",
+  toast_no_cookie: "请先粘贴 Cookie",
+  toast_import_ok: "成功导入 {n} 个账号", toast_import_fail: "导入失败：",
+  toast_testing: "正在真实打开 muse.ai 校验会话…",
+  toast_ka_one: "正在为该账号执行会话静默续期…",
+  toast_ka_ok: "✓ 账号保活成功，新到期时间已更新",
+  toast_ka_fail: "✗ 保活失败: ",
+  toast_ka_all: "正在唤醒无头浏览器，为账号池执行静默续期与保活…",
+  toast_ka_busy: "保活任务正在后台运行中，请稍候查看",
+  toast_ka_all_ok: "✓ 成功保活 {a} 个账号，跳过 {s} 个",
+  toast_ka_all_fail: "保活执行失败：",
+  toast_enabled: "已启用", toast_disabled: "已禁用", toast_op_fail: "操作失败：",
+  toast_label_ok: "标签已更新", toast_rename_fail: "改名失败：",
+  toast_ck_ok: "Cookie 已更新（{n} 条）", toast_ck_fail: "更新失败：",
+  toast_deleted: "已删除", toast_del_fail: "删除失败：",
+  toast_quota_ok: "额度：{p}，周用量已用 {u}%{e}",
+  toast_quota_extra: "，额外剩 {e}",
+  toast_quota_none: "设置面板里没有读到额度数据（可能是页面结构变了）",
+  toast_quota_fail: "额度查询失败：",
+  toast_test_fail: "测试失败：",
+  toast_need_prompt: "请输入提示词",
+  toast_sel_media: "请先选择要删除的媒体文件",
+  toast_del_ok: "删除成功", toast_del_done: "已成功删除 {n} 个文件",
+  toast_del_none: "文件不存在或已被删除",
+  toast_del_fail: "删除失败：", toast_bdel_fail: "批量删除失败：",
+  toast_cleared_n: "已清空 {n} 条记录", toast_clear_fail: "清空失败：",
+  toast_gen_ok: "✓ 生成成功", toast_gen_fail: "✗ 生成失败",
+  toast_gen_img_btn: "开始生成图片", toast_gen_vid_btn: "开始生成视频",
+  toast_new_key: "已生成新 Key 并立即生效，本页已自动更新",
+  toast_rotate_fail: "生成失败：",
+  cf_rotate: "重新生成 API Key？\n\n旧 Key 会立即失效，已经接入的下游项目必须同步更新，否则会报 401。",
+  cf_del_acc: "确定删除账号「{l}」？此操作不可撤销。",
+  cf_clear_tasks: "确定清空全部任务记录？（已生成的媒体文件不会被删除）",
+  cf_del_media: "确定要删除媒体文件「{n}」？此操作无法撤销。",
+  cf_del_media_n: "确定要永久删除选中的 {n} 个媒体文件？此操作无法撤销。",
+  cf_upgrade: "确定立即从 GitHub 官方仓库 (czg86389-hub/muse2api) 拉取最新代码并自动重启服务吗？\n\n（注：本地 .env 密钥、账号池 Cookie 和已生成的媒体文件均会自动保留，不受任何影响）",
+  prompt_new_label: "新的账号标签：",
+  prompt_new_cookie: "粘贴该账号最新的 Cookie 字符串：",
+  ago_never: "从未", ago_s: " 秒前", ago_m: " 分钟前", ago_h: " 小时前", ago_d: " 天前",
+  auth_401: "API Key 未填写或填写错误",
+  ext_loading: "读取中…", ext_includes: "包含 {n} 个文件：", ext_empty: "（扩展目录为空，请检查部署）",
+  cmd_need_key: "（先在右上角填入 API Key，这里会生成完整命令）",
+  exp_dead: "个账号已过期", exp_soon_n: "另有 {n} 个即将过期（{names}）",
+  exp_relogin: "过期的账号无法生成，请重新登录一次（约 30 秒）。",
+  exp_12h: "的有效期不足 12 小时。muse.ai 的会话约 2 天到期且不会因使用而延长，建议现在重新登录一次，避免生成时突然失败。",
+  view_result: "查看结果",
+  gen_ing: "生成中…", img_submitting: "正在提交图片任务，生成期间会持续查询状态…",
+  img_timeout: "等待超过 15 分钟，请在任务记录查看结果，勿重复提交",
+  img_waiting: "任务 {id} · {st} · 已等待 {s} 秒",
+  img_poll_fail: "状态查询暂时失败，请在任务记录查看，勿重复提交",
+  vid_creating: "正在创建视频任务…",
+  vid_waiting: "任务 {st} · 已等待 {s}s（视频通常 60–120 秒）…",
+  vid_create_fail: "创建任务失败",
+  repo_new: "🔔 发现新版本 {v} ({sha})", repo_new_short: "发现新更新 ({sha})",
+  repo_old: "旧版", repo_latest: "最新",
+  repo_latest_msg: "最新仓库提交：", repo_default_msg: "性能优化与功能更新",
+  repo_click_upgrade: "点击右侧「⚡ 一键在线升级并重启」即可自动拉取更新（保留本地配置与账号数据）。",
+  repo_toast_new: "🔔 官方仓库发布了新更新 ({sha})：{msg}",
+  repo_click_top: "点击顶部一键升级",
+  repo_uptodate: "✓ 已是最新 {v} ({sha})", repo_uptodate_short: "已是最新",
+  repo_deployed: "当前已部署版本：", repo_remote: "GitHub 官方仓库最新：",
+  repo_highlights: "✨ 当前版本核心特性 ({v})：", repo_recent: "📜 官方仓库最近提交动态：",
+  repo_no_commits: "暂无提交记录",
+  repo_toast_found: "🔔 检测到新版本更新！", repo_toast_latest: "✓ 当前已是官方仓库最新版本",
+  repo_pending: "待鉴权",
+  upg_updating: "正在在线更新…",
+  upg_done_default: "更新完成", upg_done: "，服务正在重启，就绪后将自动刷新页面…",
+  upg_fail: "在线更新失败：",
+  q_plan: "计划：", q_reset: "周限额重置：", q_used: "周用量：已用 {p}%",
+  q_extra: "额外代币：剩 {e}（已用 {u}%）",
+  q_checked: "查询时间：", q_stale: "额度数据已超过 1 小时，需重新查询",
+  q_used_short: "已用 {p}%", q_ago: "查询 ",
+  test_quota_err: "；额度读取失败：{e}", test_quota_ok: "；额度已刷新：{p}%"
+}};
+let LANG = localStorage.getItem('muse2api_lang') || 'en';
+function T(key, vars){
+  let s = (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key] ?? key;
+  if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
+  return s;
+}
+function toggleLang(){
+  LANG = (LANG === 'en') ? 'zh' : 'en';
+  try{ localStorage.setItem('muse2api_lang', LANG); }catch(_){}
+  applyLang();
+}
+function applyLang(){
+  document.documentElement.lang = (LANG === 'zh') ? 'zh-CN' : 'en';
+  document.title = T('title');
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (!k) return;
+    // skip elements whose text is managed dynamically (pool pills re-rendered by JS)
+    if (el.id === 'pSvc' || el.id === 'pAcc' || el.id === 'pBr') return;
+    // buttons whose labels are set dynamically while busy: only overwrite when idle
+    if ((el.id === 'imgBtn' || el.id === 'vidBtn' || el.id === 'btnKeepaliveAll') && el.disabled) return;
+    el.textContent = T(k);
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    el.placeholder = T(el.getAttribute('data-i18n-ph'));
+  });
+  const lb = $('langBtn');
+  if (lb) lb.textContent = (LANG === 'en') ? '中文' : 'EN';
+  // refresh auth label + key eye without changing logic
+  if (typeof authOK !== 'undefined' && authOK !== null && $('keyLbl')){
+    $('keyLbl').textContent = authOK ? T('logged_in') : T('key_need');
+  }
+  if (typeof keyShown !== 'undefined' && $('keyEye')){ try{ renderKey(); }catch(_){} }
+  if (typeof updateMediaSelectionUI === 'function'){ try{ updateMediaSelectionUI(); }catch(_){} }
+  const ka = $('btnKeepaliveAll');
+  if (ka && !ka.disabled) ka.textContent = T('ka_all');
+  const ib = $('imgBtn');
+  if (ib && !ib.disabled) ib.textContent = T('gen_img');
+  const vb = $('vidBtn');
+  if (vb && !vb.disabled) vb.textContent = T('gen_vid');
+  const sa = $('btnSelectAllMedia');
+  if (sa && typeof _selectedMedia !== 'undefined' && typeof _allMedia !== 'undefined'){
+    sa.textContent = (_allMedia.length && _selectedMedia.size === _allMedia.length) ? T('deselect_all') : T('select_all');
+  }
+  // re-render dynamic lists so badges/empty-states follow the language
+  if (typeof accounts !== 'undefined' && document.querySelector('#tab-pool.active')){ try{ loadPool(); }catch(_){} }
+}
+
 /* ================= 基础 ================= */
 const $ = id => document.getElementById(id);
 const KEY_STORE = 'muse2api_key';
@@ -768,14 +1132,14 @@ function setAuth(ok){
   $('authBanner').classList.toggle('show', !ok);
   $('keyBox').classList.toggle('ok', ok);
   $('keyBox').classList.toggle('miss', !ok);
-  $('keyLbl').textContent = ok ? '✓ 已登录' : 'API Key 必填';
+  $('keyLbl').textContent = ok ? T('logged_in') : T('key_need');
 }
 
 function saveKey(){
   KEY = $('key').value.trim();
   localStorage.setItem(KEY_STORE, KEY);
-  if (!KEY){ setAuth(false); toast('已清除 API Key', 'warn'); return; }
-  toast('API Key 已保存到本机浏览器，下次打开自动带上', 'ok');
+  if (!KEY){ setAuth(false); toast(T('toast_key_cleared'), 'warn'); return; }
+  toast(T('toast_key_saved'), 'ok');
   authOK = null;                 // 强制重新判定
   refreshAll();
 }
@@ -798,7 +1162,7 @@ async function api(path, opts){
   let data; try { data = JSON.parse(txt); } catch(e){ data = null; }
   if (r.status === 401){
     setAuth(false);
-    throw new Error('API Key 未填写或填写错误');
+    throw new Error(T('auth_401'));
   }
   setAuth(true);
   if (!r.ok) {
@@ -837,16 +1201,16 @@ function fmtTime(ts){
   return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
 function ago(ts){
-  if (!ts) return '从未';
+  if (!ts) return T('ago_never');
   const s = Math.max(0, Math.floor(Date.now()/1000) - ts);
-  if (s < 60) return s + ' 秒前';
-  if (s < 3600) return Math.floor(s/60) + ' 分钟前';
-  if (s < 86400) return Math.floor(s/3600) + ' 小时前';
-  return Math.floor(s/86400) + ' 天前';
+  if (s < 60) return s + T('ago_s');
+  if (s < 3600) return Math.floor(s/60) + T('ago_m');
+  if (s < 86400) return Math.floor(s/3600) + T('ago_h');
+  return Math.floor(s/86400) + T('ago_d');
 }
 function cp(el){
-  const t = el.parentElement.innerText.replace(/^复制\n?/, '');
-  navigator.clipboard.writeText(t).then(() => toast('已复制', 'ok'));
+  const t = el.parentElement.innerText.replace(/^复制\n?/, '').replace(/^Copy\n?/, '');
+  navigator.clipboard.writeText(t).then(() => toast(T('toast_copied'), 'ok'));
 }
 
 /* ================= 页签 ================= */
@@ -881,7 +1245,7 @@ async function loadApikey(){
   }catch(e){
     $('inBase').value = location.origin + '/v1';
     fillExtFields(location.origin);
-    $('cmdText').textContent = '（先在右上角填入 API Key，这里会生成完整命令）';
+    $('cmdText').textContent = T('cmd_need_key');
   }
 }
 
@@ -891,7 +1255,7 @@ function maskKey(k){
 }
 function renderKey(){
   $('inKey').value = keyShown ? realKey : maskKey(realKey);
-  $('keyEye').textContent = keyShown ? '隐藏' : '显示';
+  $('keyEye').textContent = keyShown ? T('hide') : T('show');
 }
 function toggleKey(){ keyShown = !keyShown; renderKey(); }
 
@@ -901,16 +1265,16 @@ function buildCmd(baseUrl){
 }
 
 async function copyText(v){
-  if (!v) return toast('没有可复制的内容', 'warn');
+  if (!v) return toast(T('toast_nothing'), 'warn');
   try{
     await navigator.clipboard.writeText(v);
-    toast('已复制到剪贴板', 'ok');
+    toast(T('toast_copied'), 'ok');
   }catch(e){
     const ta = document.createElement('textarea');   // 非 https 时的兜底
     ta.value = v; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); toast('已复制到剪贴板', 'ok'); }
-    catch(_){ toast('复制失败，请手动选中复制', 'warn'); }
+    try { document.execCommand('copy'); toast(T('toast_copied'), 'ok'); }
+    catch(_){ toast(T('toast_copy_fail'), 'warn'); }
     ta.remove();
   }
 }
@@ -929,20 +1293,20 @@ function fillExtFields(baseUrl){
 async function loadExtFiles(){
   const el = $('extFiles');
   if (!el) return;
-  el.textContent = '读取中…';
+  el.textContent = T('ext_loading');
   try{
     const d = await api('/admin/extension/files');
     const files = d.files || [];
     el.innerHTML = files.length
-      ? `包含 ${files.length} 个文件：` + files.map(f => `<code>${esc(f)}</code>`).join('、')
-      : '（扩展目录为空，请检查部署）';
+      ? T('ext_includes', {n: files.length}) + files.map(f => `<code>${esc(f)}</code>`).join('、')
+      : T('ext_empty');
   }catch(e){
-    el.textContent = '读取失败：' + e.message;
+    el.textContent = T('load_fail') + e.message;
   }
 }
 
 async function rotateKey(){
-  if (!confirm('重新生成 API Key？\n\n旧 Key 会立即失效，已经接入的下游项目必须同步更新，否则会报 401。')) return;
+  if (!confirm(T('cf_rotate'))) return;
   try{
     const d = await api('/admin/apikey/rotate', {method:'POST'});
     realKey = d.api_key;
@@ -951,64 +1315,62 @@ async function rotateKey(){
     $('key').value = KEY;
     keyShown = true; renderKey();
     $('cmdText').textContent = buildCmd($('inBase').value);
-    toast('已生成新 Key 并立即生效，本页已自动更新', 'ok');
-  }catch(e){ toast('生成失败：' + e.message, 'bad'); }
+    toast(T('toast_new_key'), 'ok');
+  }catch(e){ toast(T('toast_rotate_fail') + e.message, 'bad'); }
 }
 
 /* ================= 额度显示 ================= */
 function quotaBadge(a){
   const q = a.quota;
   if (!q || !q.found){
-    return '<span class="badge mute" title="还没查过。点「操作」里的「额度」实时查询">未查</span>';
+    return `<span class="badge mute" title="${esc(T('toast_quota_none'))}">${esc(T('badge_unchecked'))}</span>`;
   }
   const pct = (q.weekly_used_pct != null) ? q.weekly_used_pct : null;
   const cls = pct == null ? 'info' : pct < 50 ? 'ok' : pct < 80 ? 'warn' : 'bad';
   const plan = (q.plan || '').replace(/\s*plan\s*$/i, '') || '—';
-  let title = `计划：${q.plan || '?'}`;
-  if (q.weekly_reset) title += `\n周限额重置：${q.weekly_reset}`;
-  if (pct != null) title += `\n周用量：已用 ${pct}%`;
-  if (q.extra_left) title += `\n额外代币：剩 ${q.extra_left}（已用 ${q.extra_used_pct ?? '?'}%）`;
-  if (q.checked_at) title += `\n查询时间：${fmtTime(q.checked_at)}`;
-  if (q.checked_at && Date.now()/1000 - q.checked_at > 3600) title += '\n额度数据已超过 1 小时，需重新查询';
-  const main = pct != null ? `${plan} · 已用 ${pct}%` : plan;
-  const age = q.checked_at ? `<div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">查询 ${ago(q.checked_at)}</div>` : '';
+  let title = `${T('q_plan')}${q.plan || '?'}`;
+  if (q.weekly_reset) title += `\n${T('q_reset')}${q.weekly_reset}`;
+  if (pct != null) title += `\n${T('q_used', {p: pct})}`;
+  if (q.extra_left) title += `\n${T('q_extra', {e: q.extra_left, u: q.extra_used_pct ?? '?'})}`;
+  if (q.checked_at) title += `\n${T('q_checked')}${fmtTime(q.checked_at)}`;
+  if (q.checked_at && Date.now()/1000 - q.checked_at > 3600) title += '\n' + T('q_stale');
+  const main = pct != null ? `${plan} · ${T('q_used_short', {p: pct})}` : plan;
+  const age = q.checked_at ? `<div class="mono" style="font-size:10px;color:var(--muted);margin-top:2px">${T('q_ago')}${ago(q.checked_at)}</div>` : '';
   const sub = (q.extra_left ? `<div class="mono" style="font-size:11px;color:var(--muted);margin-top:2px">+${esc(q.extra_left)}</div>` : '') + age;
   return `<span class="badge ${cls}" title="${esc(title)}">${esc(main)}</span>${sub}`;
 }
 
 async function queryQuota(aid, btn){
-  if (btn){ btn.disabled = true; btn.textContent = '查询中…'; }
+  if (btn){ btn.disabled = true; btn.textContent = T('b_quota_ing'); }
   try{
     const q = await api(`/admin/accounts/${aid}/quota`, {method:'POST'});
     if (q.found){
-      const extra = q.extra_left ? `，额外剩 ${q.extra_left}` : '';
-      toast(`额度：${q.plan || '?'}，周用量已用 ${q.weekly_used_pct ?? '?'}%${extra}`, 'ok');
+      const extra = q.extra_left ? T('toast_quota_extra', {e: q.extra_left}) : '';
+      toast(T('toast_quota_ok', {p: q.plan || '?', u: q.weekly_used_pct ?? '?', e: extra}), 'ok');
     }else{
-      toast('设置面板里没有读到额度数据（可能是页面结构变了）', 'warn');
+      toast(T('toast_quota_none'), 'warn');
     }
     loadPool();
   }catch(e){
-    toast('额度查询失败：' + e.message, 'bad');
-    if (btn){ btn.disabled = false; btn.textContent = '额度'; }
+    toast(T('toast_quota_fail') + e.message, 'bad');
+    if (btn){ btn.disabled = false; btn.textContent = T('b_quota'); }
   }
 }
 
 /* ================= 有效期显示 ================= */
 function expiryBadge(a){
   const ts = a && a.expires_at;
-  if (!ts) return '<span class="badge mute" title="未记录有效期">未知</span>';
-  const est = a.expires_estimated
-    ? '（按 hatch_vml 约 2 天寿命推算，未取到精确 expires）'
-    : '（hatch_vml 实测到期时间）';
+  if (!ts) return `<span class="badge mute">${esc(T('badge_unknown'))}</span>`;
+  const est = '';
   const left = ts - Math.floor(Date.now() / 1000);
-  if (left <= 0) return `<span class="badge bad" title="已于 ${fmtTime(ts)} 过期${est}">已过期</span>`;
+  if (left <= 0) return `<span class="badge bad" title="${fmtTime(ts)}">${esc(T('badge_expired'))}</span>`;
   const days = left / 86400;
   // 保留一位小数，别把「还剩 1.9 天」显示成「剩 1 天」（会让人以为快没了）
   const txt = days >= 1
-    ? `剩 ${days >= 10 ? Math.round(days) : days.toFixed(1)} 天`
-    : `剩 ${Math.max(1, Math.floor(left / 3600))} 小时`;
+    ? `${T('badge_left_days')} ${(days >= 10 ? Math.round(days) : days.toFixed(1))}${T('badge_day')}`
+    : `${T('badge_left_hours')} ${Math.max(1, Math.floor(left / 3600))}${T('badge_hour')}`;
   const cls = days < 1 ? 'bad' : days < 3 ? 'warn' : 'ok';
-  return `<span class="badge ${cls}" title="到期时间：${fmtTime(ts)}${est}">${txt}</span>`;
+  return `<span class="badge ${cls}" title="${fmtTime(ts)}${est}">${txt}</span>`;
 }
 
 /* ================= 账号池 ================= */
@@ -1025,7 +1387,7 @@ async function loadPool(){
     $('sDis').textContent   = st.disabled ?? 0;
     $('poolCount').textContent = accounts.length;
     $('pAcc').className = 'pill ' + (accounts.length ? 'on' : 'off');
-    $('pAcc').innerHTML = `<span class="led"></span>账号 <b>${accounts.length}</b>`;
+    $('pAcc').innerHTML = `<span class="led"></span>${esc(T('pill_acc'))} <b>${accounts.length}</b>`;
 
     // 快过期 / 已过期提醒。hatch_vml 只有约 2 天寿命，且不会因为使用而延长，
     // 所以这里是刚需提醒，不是锦上添花。
@@ -1038,51 +1400,49 @@ async function loadPool(){
       const names = soon.slice(0, 4).map(a => esc(a.label)).join('、') +
                     (soon.length > 4 ? ` 等 ${soon.length} 个` : '');
       $('expWarnText').innerHTML = dead
-        ? `⚠️ <b>${dead} 个账号已过期</b>，${soon.length - dead ? `另有 ${soon.length - dead} 个即将过期（${names}）` : names}。` +
-          `过期的账号无法生成，请重新登录一次（约 30 秒）。`
-        : `⏳ <b>${names}</b> 的有效期不足 12 小时。muse.ai 的会话约 2 天到期且不会因使用而延长，` +
-          `建议现在重新登录一次，避免生成时突然失败。`;
+        ? `⚠️ <b>${dead} ${T('exp_dead')}</b> ${soon.length - dead ? T('exp_soon_n', {n: soon.length - dead, names: names}) : names}. ${T('exp_relogin')}`
+        : `⏳ <b>${names}</b> ${T('exp_12h')}`;
       bar.style.display = '';
     }else{
       bar.style.display = 'none';
     }
 
     if (!accounts.length){
-      $('poolBody').innerHTML = '<tr><td colspan="10" class="empty">还没有账号。去「获取 Cookie」页签按三步导入一个</td></tr>';
+      $('poolBody').innerHTML = `<tr><td colspan="10" class="empty">${esc(T('empty_pool'))}</td></tr>`;
       return;
     }
     $('poolBody').innerHTML = accounts.map(a => {
       const ok = a.ok;
-      const badge = !a.enabled ? '<span class="badge mute">已禁用</span>'
-                  : ok === true  ? '<span class="badge ok">● 可用</span>'
-                  : ok === false ? '<span class="badge bad">● 异常</span>'
-                  : '<span class="badge warn">○ 未检测</span>';
-      const miss = a.essential_ok ? '' : ' <span class="badge bad" title="缺少核心 cookie，无法生成">缺核心</span>';
+      const badge = !a.enabled ? `<span class="badge mute">${esc(T('st_disabled'))}</span>`
+                  : ok === true  ? `<span class="badge ok">${esc(T('st_available'))}</span>`
+                  : ok === false ? `<span class="badge bad">${esc(T('st_error'))}</span>`
+                  : `<span class="badge warn">${esc(T('st_unchecked'))}</span>`;
+      const miss = a.essential_ok ? '' : ` <span class="badge bad">${esc(T('badge_missing'))}</span>`;
       return `<tr>
         <td><b>${esc(a.label)}</b></td>
         <td class="mono">${esc(a.id)}</td>
         <td>${badge}${miss}</td>
         <td>${expiryBadge(a)}</td>
         <td>${quotaBadge(a)}</td>
-        <td>${a.enabled ? '<span class="badge ok">开</span>' : '<span class="badge mute">关</span>'}</td>
+        <td>${a.enabled ? `<span class="badge ok">${esc(T('st_on'))}</span>` : `<span class="badge mute">${esc(T('st_off'))}</span>`}</td>
         <td class="mono">${a.cookie_count}</td>
         <td class="mono" title="${a.last_used ? fmtTime(a.last_used) : ''}">${ago(a.last_used)}</td>
         <td class="mono ellip" title="${esc(a.note||'')}">${esc(a.note || '—')}</td>
         <td><div class="acts">
-          <button class="ghost mini" onclick="testAcc('${a.id}')">测试</button>
-          <button class="ghost mini" onclick="keepaliveOne('${a.id}')" title="静默刷新会话令牌与有效期">保活</button>
-          <button class="ghost mini" onclick="queryQuota('${a.id}', this)">额度</button>
-          <button class="ghost mini" onclick="toggleAcc('${a.id}', ${!a.enabled})">${a.enabled ? '禁用' : '启用'}</button>
-          <button class="ghost mini" onclick="renameAcc('${a.id}','${esc(a.label)}')">改名</button>
-          <button class="ghost mini" onclick="updateCookies('${a.id}')">更新Cookie</button>
-          <button class="danger mini" onclick="delAcc('${a.id}','${esc(a.label)}')">删除</button>
+          <button class="ghost mini" onclick="testAcc('${a.id}')">${T('b_test')}</button>
+          <button class="ghost mini" onclick="keepaliveOne('${a.id}')">${T('b_keepalive')}</button>
+          <button class="ghost mini" onclick="queryQuota('${a.id}', this)">${T('b_quota')}</button>
+          <button class="ghost mini" onclick="toggleAcc('${a.id}', ${!a.enabled})">${a.enabled ? T('b_disable') : T('b_enable')}</button>
+          <button class="ghost mini" onclick="renameAcc('${a.id}','${esc(a.label)}')">${T('b_rename')}</button>
+          <button class="ghost mini" onclick="updateCookies('${a.id}')">${T('b_update_ck')}</button>
+          <button class="danger mini" onclick="delAcc('${a.id}','${esc(a.label)}')">${T('b_delete')}</button>
         </div></td>
       </tr>`;
     }).join('');
   }catch(e){
     $('poolBody').innerHTML = authOK === false
-      ? '<tr><td colspan="10" class="empty">🔑 请先在右上角填入 API Key 并点「保存」</td></tr>'
-      : `<tr><td colspan="10" class="empty">加载失败：${esc(e.message)}</td></tr>`;
+      ? `<tr><td colspan="10" class="empty">${esc(T('empty_pool_key'))}</td></tr>`
+      : `<tr><td colspan="10" class="empty">${esc(T('load_fail'))}${esc(e.message)}</td></tr>`;
   }
 }
 
@@ -1091,86 +1451,86 @@ async function addAccount(fromManual){
   const ckEl    = $(fromManual ? 'mCookie' : 'newCookie');
   const label = labelEl.value.trim();
   const raw = ckEl.value.trim();
-  if (!raw) return toast('请先粘贴 Cookie', 'warn');
+  if (!raw) return toast(T('toast_no_cookie'), 'warn');
   const lines = raw.split('\n').map(s => s.trim()).filter(Boolean);
   const body = (lines.length > 1) ? {batch: raw} : {label: label, cookie_header: raw};
   try{
     const r = await api('/admin/accounts', {method:'POST', body: JSON.stringify(body)});
     if (r.warning) toast(r.warning, 'warn');
-    else toast(`成功导入 ${r.count} 个账号`, 'ok');
+    else toast(T('toast_import_ok', {n: r.count}), 'ok');
     ckEl.value = ''; labelEl.value = '';
     loadPool();
-  }catch(e){ toast('导入失败：' + e.message, 'bad'); }
+  }catch(e){ toast(T('toast_import_fail') + e.message, 'bad'); }
 }
 
 async function testAcc(id){
-  toast('正在真实打开 muse.ai 校验会话…');
+  toast(T('toast_testing'));
   try{
     const r = await api(`/admin/accounts/${id}/test`, {method:'POST'});
-    const quotaStatus = r.quota_error ? `；额度读取失败：${r.quota_error}` : r.quota ? `；额度已刷新：${r.quota.weekly_used_pct ?? '?'}%` : '';
+    const quotaStatus = r.quota_error ? T('test_quota_err', {e: r.quota_error}) : r.quota ? T('test_quota_ok', {p: r.quota.weekly_used_pct ?? '?'}) : '';
     toast((r.ok ? '✓ ' : '✗ ') + r.message + quotaStatus, r.ok && !r.quota_error ? 'ok' : 'warn');
     loadPool();
-  }catch(e){ toast('测试失败：' + e.message, 'bad'); }
+  }catch(e){ toast(T('toast_test_fail') + e.message, 'bad'); }
 }
 
 async function keepaliveOne(id){
-  toast('正在为该账号执行会话静默续期…');
+  toast(T('toast_ka_one'));
   try{
     const r = await api(`/admin/accounts/${id}/keepalive`, {method:'POST'});
-    toast(r.ok ? `✓ 账号保活成功，新到期时间已更新` : `✗ 保活失败: ${r.error||'未知错误'}`, r.ok ? 'ok' : 'bad');
+    toast(r.ok ? T('toast_ka_ok') : T('toast_ka_fail') + (r.error||'??'), r.ok ? 'ok' : 'bad');
     loadPool();
-  }catch(e){ toast('保活失败：' + e.message, 'bad'); }
+  }catch(e){ toast(T('toast_ka_fail') + e.message, 'bad'); }
 }
 
 async function keepaliveAll(){
   const btn = $('btnKeepaliveAll');
-  if (btn) { btn.disabled = true; btn.innerText = '保活执行中…'; }
-  toast('正在唤醒无头浏览器，为账号池执行静默续期与保活…', 'warn');
+  if (btn) { btn.disabled = true; btn.innerText = T('toast_ka_all'); }
+  toast(T('toast_ka_all'), 'warn');
   try{
     const r = await api('/admin/accounts/keepalive?force=true', {method:'POST'});
     if (r.status === 'busy') {
-      toast('保活任务正在后台运行中，请稍候查看', 'warn');
+      toast(T('toast_ka_busy'), 'warn');
     } else {
-      toast(`✓ 成功保活 ${r.refreshed_count || 0} 个账号，跳过 ${r.skipped_count || 0} 个`, 'ok');
+      toast(T('toast_ka_all_ok', {a: r.refreshed_count || 0, s: r.skipped_count || 0}), 'ok');
     }
     loadPool();
-  }catch(e){ toast('保活执行失败：' + e.message, 'bad'); }
+  }catch(e){ toast(T('toast_ka_all_fail') + e.message, 'bad'); }
   finally{
-    if (btn) { btn.disabled = false; btn.innerText = '⚡ 一键保活所有账号'; }
+    if (btn) { btn.disabled = false; btn.innerText = T('ka_all'); }
   }
 }
 
 async function toggleAcc(id, enabled){
   try{
     await api(`/admin/accounts/${id}`, {method:'PATCH', body: JSON.stringify({enabled})});
-    toast(enabled ? '已启用' : '已禁用', 'ok'); loadPool();
-  }catch(e){ toast('操作失败：' + e.message, 'bad'); }
+    toast(enabled ? T('toast_enabled') : T('toast_disabled'), 'ok'); loadPool();
+  }catch(e){ toast(T('toast_op_fail') + e.message, 'bad'); }
 }
 
 async function renameAcc(id, old){
-  const label = prompt('新的账号标签：', old);
+  const label = prompt(T('prompt_new_label'), old);
   if (label === null || !label.trim()) return;
   try{
     await api(`/admin/accounts/${id}`, {method:'PATCH', body: JSON.stringify({label: label.trim()})});
-    toast('标签已更新', 'ok'); loadPool();
-  }catch(e){ toast('改名失败：' + e.message, 'bad'); }
+    toast(T('toast_label_ok'), 'ok'); loadPool();
+  }catch(e){ toast(T('toast_rename_fail') + e.message, 'bad'); }
 }
 
 async function updateCookies(id){
-  const v = prompt('粘贴该账号最新的 Cookie 字符串：');
+  const v = prompt(T('prompt_new_cookie'));
   if (!v || !v.trim()) return;
   try{
     const r = await api(`/admin/accounts/${id}/cookies`, {method:'POST', body: JSON.stringify({cookie_header: v.trim()})});
-    toast(`Cookie 已更新（${r.cookie_count} 条）`, 'ok'); loadPool();
-  }catch(e){ toast('更新失败：' + e.message, 'bad'); }
+    toast(T('toast_ck_ok', {n: r.cookie_count}), 'ok'); loadPool();
+  }catch(e){ toast(T('toast_ck_fail') + e.message, 'bad'); }
 }
 
 async function delAcc(id, label){
-  if (!confirm(`确定删除账号「${label}」？此操作不可撤销。`)) return;
+  if (!confirm(T('cf_del_acc', {l: label}))) return;
   try{
     await api(`/admin/accounts/${id}`, {method:'DELETE'});
-    toast('已删除', 'ok'); loadPool();
-  }catch(e){ toast('删除失败：' + e.message, 'bad'); }
+    toast(T('toast_deleted'), 'ok'); loadPool();
+  }catch(e){ toast(T('toast_del_fail') + e.message, 'bad'); }
 }
 
 /* ================= 任务记录 ================= */
@@ -1179,38 +1539,38 @@ async function loadTasks(){
     const d = await api('/admin/tasks?limit=60');
     const ts = d.tasks || [];
     $('taskCount').textContent = ts.length;
-    if (!ts.length){ $('taskBody').innerHTML = '<tr><td colspan="8" class="empty">暂无任务记录</td></tr>'; return; }
+    if (!ts.length){ $('taskBody').innerHTML = `<tr><td colspan="8" class="empty">${esc(T('empty_tasks'))}</td></tr>`; return; }
     $('taskBody').innerHTML = ts.map(t => {
       const cls = (t.status === 'succeeded' || t.status === 'completed') ? 'ok' : t.status === 'failed' ? 'bad'
                 : t.status === 'processing' ? 'info' : 'warn';
       let out = '—';
-      if (t.result && t.result.url) out = `<a href="${esc(t.result.url)}" target="_blank">查看结果</a> <span class="mono">${fmtBytes(t.result.bytes)}</span>`;
+      if (t.result && t.result.url) out = `<a href="${esc(t.result.url)}" target="_blank">${esc(T('view_result'))}</a> <span class="mono">${fmtBytes(t.result.bytes)}</span>`;
       else if (t.error) out = `<span style="color:var(--bad)">${esc(t.error).slice(0,120)}</span>`;
       return `<tr>
         <td class="mono">${esc(t.id)}</td>
-        <td>${t.kind === 'video' ? '<span class="badge info">视频</span>' : '<span class="badge info">图片</span>'}</td>
+        <td>${t.kind === 'video' ? `<span class="badge info">${esc(T('badge_video'))}</span>` : `<span class="badge info">${esc(T('badge_image'))}</span>`}</td>
         <td><span class="ellip" title="${esc(t.prompt)}">${esc(t.prompt)}</span></td>
         <td><span class="badge ${cls}">${esc(t.status)}</span></td>
         <td class="mono">${t.elapsed ? t.elapsed + 's' : '—'}</td>
         <td class="mono">${fmtTime(t.created_at)}</td>
         <td>${out}</td>
-        <td><button class="danger mini" onclick="delTask('${t.id}')">删</button></td>
+        <td><button class="danger mini" onclick="delTask('${t.id}')">${T('b_del')}</button></td>
       </tr>`;
     }).join('');
   }catch(e){
-    $('taskBody').innerHTML = `<tr><td colspan="8" class="empty">加载失败：${esc(e.message)}</td></tr>`;
+    $('taskBody').innerHTML = `<tr><td colspan="8" class="empty">${esc(T('load_fail'))}${esc(e.message)}</td></tr>`;
   }
 }
 async function delTask(id){
   try{ await api('/admin/tasks/' + id, {method:'DELETE'}); loadTasks(); }
-  catch(e){ toast('删除失败：' + e.message, 'bad'); }
+  catch(e){ toast(T('toast_del_fail') + e.message, 'bad'); }
 }
 async function clearTasks(){
-  if (!confirm('确定清空全部任务记录？（已生成的媒体文件不会被删除）')) return;
+  if (!confirm(T('cf_clear_tasks'))) return;
   try{
     const r = await api('/admin/tasks/clear', {method:'POST', body: JSON.stringify({keep: 0})});
-    toast(`已清空 ${r.removed} 条记录`, 'ok'); loadTasks();
-  }catch(e){ toast('清空失败：' + e.message, 'bad'); }
+    toast(T('toast_cleared_n', {n: r.removed}), 'ok'); loadTasks();
+  }catch(e){ toast(T('toast_clear_fail') + e.message, 'bad'); }
 }
 
 /* ================= 媒体库 ================= */
@@ -1229,7 +1589,7 @@ function updateMediaSelectionUI(){
     btnDel.style.display = count > 0 ? 'inline-flex' : 'none';
   }
   if (btnSelAll) {
-    btnSelAll.textContent = (total > 0 && count === total) ? '取消全选' : '全选';
+    btnSelAll.textContent = (total > 0 && count === total) ? T('deselect_all') : T('select_all');
   }
 
   document.querySelectorAll('.tile[data-name]').forEach(el => {
@@ -1262,29 +1622,29 @@ function toggleSelectAllMedia(){
 }
 
 async function delSingleMedia(name){
-  if (!confirm(`确定要删除媒体文件「${name}」？此操作无法撤销。`)) return;
+  if (!confirm(T('cf_del_media', {n: name}))) return;
   try{
     const r = await api('/admin/media/delete', {
       method: 'POST',
       body: JSON.stringify({ names: [name] })
     });
     if (r.removed > 0) {
-      toast('删除成功', 'ok');
+      toast(T('toast_del_ok'), 'ok');
       _selectedMedia.delete(name);
       loadMedia();
     } else {
-      toast('文件不存在或已被删除', 'warn');
+      toast(T('toast_del_none'), 'warn');
       loadMedia();
     }
   }catch(e){
-    toast('删除失败：' + e.message, 'bad');
+    toast(T('toast_del_fail') + e.message, 'bad');
   }
 }
 
 async function delSelectedMedia(){
   const count = _selectedMedia.size;
-  if (!count) return toast('请先选择要删除的媒体文件', 'warn');
-  if (!confirm(`确定要永久删除选中的 ${count} 个媒体文件？此操作无法撤销。`)) return;
+  if (!count) return toast(T('toast_sel_media'), 'warn');
+  if (!confirm(T('cf_del_media_n', {n: count}))) return;
 
   const names = Array.from(_selectedMedia);
   const btn = $('btnDelSelectedMedia');
@@ -1295,11 +1655,11 @@ async function delSelectedMedia(){
       method: 'POST',
       body: JSON.stringify({ names })
     });
-    toast(`已成功删除 ${r.removed || 0} 个文件`, 'ok');
+    toast(T('toast_del_done', {n: r.removed || 0}), 'ok');
     _selectedMedia.clear();
     loadMedia();
   }catch(e){
-    toast('批量删除失败：' + e.message, 'bad');
+    toast(T('toast_bdel_fail') + e.message, 'bad');
   }finally{
     if (btn) btn.disabled = false;
   }
@@ -1317,7 +1677,7 @@ async function loadMedia(){
     $('mediaCount').textContent = ms.length;
     $('sMedia').textContent = ms.length;
     if (!ms.length){
-      $('mediaGrid').innerHTML = '<div class="empty">还没有生成任何媒体文件</div>';
+      $('mediaGrid').innerHTML = `<div class="empty">${esc(T('empty_media'))}</div>`;
       updateMediaSelectionUI();
       return;
     }
@@ -1335,25 +1695,25 @@ async function loadMedia(){
           <div class="nm" title="${esc(m.name)}">${esc(m.name)}</div>
           <div style="margin-top:3px">${fmtBytes(m.bytes)} · ${fmtTime(m.mtime)}</div>
           <div class="ac">
-            <a class="badge info" href="${esc(m.url)}" target="_blank">打开</a>
-            <a class="badge mute" href="${esc(m.url)}" download>下载</a>
-            <a class="badge bad" href="javascript:void(0)" onclick="delSingleMedia('${esc(m.name)}')">删除</a>
+            <a class="badge info" href="${esc(m.url)}" target="_blank">${esc(T('b_open'))}</a>
+            <a class="badge mute" href="${esc(m.url)}" download>${esc(T('b_download'))}</a>
+            <a class="badge bad" href="javascript:void(0)" onclick="delSingleMedia('${esc(m.name)}')">${esc(T('b_delete'))}</a>
           </div>
         </div>
       </div>`;
     }).join('');
     updateMediaSelectionUI();
-  }catch(e){ $('mediaGrid').innerHTML = `<div class="empty">加载失败：${esc(e.message)}</div>`; }
+  }catch(e){ $('mediaGrid').innerHTML = `<div class="empty">${esc(T('load_fail'))}${esc(e.message)}</div>`; }
 }
 
 /* ================= 在线测试 ================= */
 async function runImage(){
   const btn = $('imgBtn'), box = $('imgRes');
   const prompt = $('imgPrompt').value.trim();
-  if (!prompt) return toast('请输入提示词', 'warn');
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>生成中…';
+  if (!prompt) return toast(T('toast_need_prompt'), 'warn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>' + esc(T('gen_ing'));
   box.className = 'result show';
-  box.innerHTML = '<span class="spin"></span>正在提交图片任务，生成期间会持续查询状态…';
+  box.innerHTML = '<span class="spin"></span>' + esc(T('img_submitting'));
   const t0 = Date.now();
   try{
     let r = await api('/v1/images/tasks', {method:'POST',
@@ -1362,35 +1722,35 @@ async function runImage(){
     const deadline = Date.now() + 15 * 60 * 1000;
     let failures = 0;
     while (r.status !== 'completed') {
-      if (Date.now() >= deadline) throw new Error('等待超过 15 分钟，请在任务记录查看结果，勿重复提交');
-      if (r.status === 'failed') throw new Error(r.error || '图片生成失败');
-      box.textContent = `任务 ${taskId} · ${r.status} · 已等待 ${Math.floor((Date.now()-t0)/1000)} 秒`;
+      if (Date.now() >= deadline) throw new Error(T('img_timeout'));
+      if (r.status === 'failed') throw new Error(r.error || T('toast_gen_fail'));
+      box.textContent = T('img_waiting', {id: taskId, st: r.status, s: Math.floor((Date.now()-t0)/1000)});
       await new Promise(resolve => setTimeout(resolve, 3000));
       try {
         r = await api('/v1/images/tasks/' + encodeURIComponent(taskId));
         failures = 0;
       } catch (e) {
-        if (++failures >= 6) throw new Error('状态查询暂时失败，请在任务记录查看，勿重复提交');
+        if (++failures >= 6) throw new Error(T('img_poll_fail'));
       }
     }
     const it = r.data[0];
-    box.innerHTML = `<b style="color:var(--ok)">✓ 生成成功</b>
+    box.innerHTML = `<b style="color:var(--ok)">${esc(T('toast_gen_ok'))}</b>
       <span class="mono" style="color:var(--muted);margin-left:10px">${((Date.now()-t0)/1000).toFixed(1)}s · ${fmtBytes(it.bytes)}</span>
       <img src="${esc(it.url)}" alt="">
       <pre class="out">${esc(JSON.stringify(r, null, 2))}</pre>`;
     loadMedia();
   }catch(e){
-    box.innerHTML = `<b style="color:var(--bad)">✗ 生成失败</b><pre class="out">${esc(e.message)}</pre>`;
-  }finally{ btn.disabled = false; btn.textContent = '开始生成图片'; }
+    box.innerHTML = `<b style="color:var(--bad)">${esc(T('toast_gen_fail'))}</b><pre class="out">${esc(e.message)}</pre>`;
+  }finally{ btn.disabled = false; btn.textContent = T('toast_gen_img_btn'); }
 }
 
 async function runVideo(){
   const btn = $('vidBtn'), box = $('vidRes');
   const prompt = $('vidPrompt').value.trim();
-  if (!prompt) return toast('请输入提示词', 'warn');
-  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>生成中…';
+  if (!prompt) return toast(T('toast_need_prompt'), 'warn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>' + esc(T('gen_ing'));
   box.className = 'result show';
-  box.innerHTML = '<span class="spin"></span>正在创建视频任务…';
+  box.innerHTML = '<span class="spin"></span>' + esc(T('vid_creating'));
   const t0 = Date.now();
   try{
     const t = await api('/v1/videos', {method:'POST', body: JSON.stringify({
@@ -1401,24 +1761,24 @@ async function runVideo(){
       if (s.status === 'succeeded' || s.status === 'completed'){
         const vurl = (s.result && s.result.url) || s.url || '';
         const vbytes = (s.result && s.result.bytes) || 0;
-        box.innerHTML = `<b style="color:var(--ok)">✓ 生成成功</b>
+        box.innerHTML = `<b style="color:var(--ok)">${esc(T('toast_gen_ok'))}</b>
           <span class="mono" style="color:var(--muted);margin-left:10px">${el}s · ${fmtBytes(vbytes)}</span>
           <video src="${esc(vurl)}" controls playsinline></video>
           <pre class="out">${esc(JSON.stringify(s, null, 2))}</pre>`;
-        btn.disabled = false; btn.textContent = '开始生成视频';
+        btn.disabled = false; btn.textContent = T('toast_gen_vid_btn');
         loadMedia(); loadTasks();
       }else if (s.status === 'failed'){
-        box.innerHTML = `<b style="color:var(--bad)">✗ 生成失败</b><pre class="out">${esc(s.error||'')}</pre>`;
-        btn.disabled = false; btn.textContent = '开始生成视频';
+        box.innerHTML = `<b style="color:var(--bad)">${esc(T('toast_gen_fail'))}</b><pre class="out">${esc(s.error||'')}</pre>`;
+        btn.disabled = false; btn.textContent = T('toast_gen_vid_btn');
       }else{
-        box.innerHTML = `<span class="spin"></span>任务 ${esc(s.status)} · 已等待 ${el}s（视频通常 60–120 秒）…`;
+        box.innerHTML = `<span class="spin"></span>${esc(T('vid_waiting', {st: s.status, s: el}))}`;
         setTimeout(tick, 4000);
       }
     };
     tick();
   }catch(e){
-    box.innerHTML = `<b style="color:var(--bad)">✗ 创建任务失败</b><pre class="out">${esc(e.message)}</pre>`;
-    btn.disabled = false; btn.textContent = '开始生成视频';
+    box.innerHTML = `<b style="color:var(--bad)">✗ ${esc(T('vid_create_fail'))}</b><pre class="out">${esc(e.message)}</pre>`;
+    btn.disabled = false; btn.textContent = T('toast_gen_vid_btn');
   }
 }
 
@@ -1481,56 +1841,56 @@ async function loadRepoStatus(force){
 
     if (s.has_update){
       badge.className = 'badge warn';
-      badge.textContent = `🔔 发现新版本 ${rVer} (${s.remote_sha || 'latest'})`;
+      badge.textContent = T('repo_new', {v: rVer, sha: s.remote_sha || 'latest'});
       topBtn.classList.add('updpill-alert');
-      topBtn.innerHTML = `🔔 <span id="repoTopTxt">发现新更新 (${esc(s.remote_sha || rVer)})</span>`;
-      $('updBannerVer').textContent = `${lVer} (${s.local_sha || '旧版'}) → ${rVer} (${s.remote_sha || '最新'})`;
-      $('updBannerMsg').innerHTML = `最新仓库提交：<b>${esc(s.remote_msg || '性能优化与功能更新')}</b> · 点击右侧「⚡ 一键在线升级并重启」即可自动拉取更新（保留本地配置与账号数据）。`;
+      topBtn.innerHTML = `🔔 <span id="repoTopTxt">${esc(T('repo_new_short', {sha: s.remote_sha || rVer}))}</span>`;
+      $('updBannerVer').textContent = `${lVer} (${s.local_sha || T('repo_old')}) → ${rVer} (${s.remote_sha || T('repo_latest')})`;
+      $('updBannerMsg').innerHTML = `${esc(T('repo_latest_msg'))}<b>${esc(s.remote_msg || T('repo_default_msg'))}</b> · ${esc(T('repo_click_upgrade'))}`;
       if (_dismissedSha !== s.remote_sha){
         banner.classList.add('show');
       }
       if (_notifiedSha !== s.remote_sha && s.remote_sha){
         _notifiedSha = s.remote_sha;
         localStorage.setItem('muse2api_notified_sha', _notifiedSha);
-        toast(`🔔 官方仓库发布了新更新 (${s.remote_sha})：${s.remote_msg || '点击顶部一键升级'}`, 'warn');
+        toast(T('repo_toast_new', {sha: s.remote_sha, msg: s.remote_msg || T('repo_click_top')}), 'warn');
       }
     } else {
       badge.className = 'badge ok';
-      badge.textContent = `✓ 已是最新 ${lVer} (${s.local_sha || 'main'})`;
+      badge.textContent = T('repo_uptodate', {v: lVer, sha: s.local_sha || 'main'});
       topBtn.classList.remove('updpill-alert');
-      topBtn.innerHTML = `📦 <span id="repoTopTxt">${esc(lVer)} · 已是最新</span>`;
+      topBtn.innerHTML = `📦 <span id="repoTopTxt">${esc(lVer)} · ${esc(T('repo_uptodate_short'))}</span>`;
       banner.classList.remove('show');
     }
 
-    desc.innerHTML = `当前已部署版本：<code>${esc(lVer)}</code>（Commit: <code>${esc(s.local_sha || '—')}</code>） · ` +
-      `GitHub 官方仓库最新：<code>${esc(rVer)}</code>（Commit: <code>${esc(s.remote_sha || '—')}</code> ${esc(s.remote_msg || '')}）`;
+    desc.innerHTML = `${esc(T('repo_deployed'))}<code>${esc(lVer)}</code>（Commit: <code>${esc(s.local_sha || '—')}</code>） · ` +
+      `${esc(T('repo_remote'))}<code>${esc(rVer)}</code>（Commit: <code>${esc(s.remote_sha || '—')}</code> ${esc(s.remote_msg || '')}）`;
 
     let html = '';
     if (Array.isArray(s.highlights) && s.highlights.length){
-      html += `<div style="margin-bottom:8px"><b style="color:var(--text)">✨ 当前版本核心特性 (${esc(rVer)})：</b><ul style="margin:4px 0 0 18px;padding:0;color:var(--muted)">` +
+      html += `<div style="margin-bottom:8px"><b style="color:var(--text)">${esc(T('repo_highlights', {v: rVer}))}</b><ul style="margin:4px 0 0 18px;padding:0;color:var(--muted)">` +
         s.highlights.map(h => `<li>${esc(h)}</li>`).join('') + `</ul></div>`;
     }
     if (Array.isArray(s.recent_commits) && s.recent_commits.length){
-      html += `<div><b style="color:var(--text)">📜 官方仓库最近提交动态：</b><div style="margin-top:5px;display:flex;flex-direction:column;gap:4px">` +
+      html += `<div><b style="color:var(--text)">${esc(T('repo_recent'))}</b><div style="margin-top:5px;display:flex;flex-direction:column;gap:4px">` +
         s.recent_commits.slice(0, 5).map(c =>
           `<div style="display:flex;gap:8px;align-items:center"><a href="${esc(c.url)}" target="_blank" class="mono" style="color:var(--accent)">[${esc(c.sha)}]</a><span>${esc(c.message)}</span><span class="mono" style="margin-left:auto">${esc((c.date||'').replace('T',' ').replace('Z',''))}</span></div>`
         ).join('') + `</div></div>`;
     }
-    if (box) box.innerHTML = html || '<span style="color:var(--muted)">暂无提交记录</span>';
-    if (force) toast(s.has_update ? '🔔 检测到新版本更新！' : '✓ 当前已是官方仓库最新版本', s.has_update ? 'warn' : 'ok');
+    if (box) box.innerHTML = html || `<span style="color:var(--muted)">${esc(T('repo_no_commits'))}</span>`;
+    if (force) toast(s.has_update ? T('repo_toast_found') : T('repo_toast_latest'), s.has_update ? 'warn' : 'ok');
   }catch(e){
-    if ($('repoBadge')) { $('repoBadge').className = 'badge mute'; $('repoBadge').textContent = '待鉴权'; }
+    if ($('repoBadge')) { $('repoBadge').className = 'badge mute'; $('repoBadge').textContent = T('repo_pending'); }
   }
 }
 
 async function upgradeNow(){
-  if (!confirm('确定立即从 GitHub 官方仓库 (czg86389-hub/muse2api) 拉取最新代码并自动重启服务吗？\n\n（注：本地 .env 密钥、账号池 Cookie 和已生成的媒体文件均会自动保留，不受任何影响）')) return;
+  if (!confirm(T('cf_upgrade'))) return;
   const btn1 = $('btnRepoPull'), btn2 = $('btnBannerUpgrade');
-  if (btn1) { btn1.disabled = true; btn1.innerHTML = '<span class="spin"></span>正在在线更新…'; }
-  if (btn2) { btn2.disabled = true; btn2.innerHTML = '<span class="spin"></span>正在在线更新…'; }
+  if (btn1) { btn1.disabled = true; btn1.innerHTML = '<span class="spin"></span>' + esc(T('upg_updating')); }
+  if (btn2) { btn2.disabled = true; btn2.innerHTML = '<span class="spin"></span>' + esc(T('upg_updating')); }
   try{
     const r = await api('/admin/update/upgrade', {method: 'POST', body: JSON.stringify({restart: true})});
-    toast('✓ ' + (r.message || '更新完成') + '，服务正在重启，就绪后将自动刷新页面…', 'ok');
+    toast('✓ ' + (r.message || T('upg_done_default')) + T('upg_done'), 'ok');
     $('updateBanner').classList.remove('show');
     let tries = 0;
     const waitReady = async () => {
@@ -1544,9 +1904,9 @@ async function upgradeNow(){
     };
     setTimeout(waitReady, 2500);
   }catch(e){
-    toast('在线更新失败：' + e.message, 'bad');
-    if (btn1) { btn1.disabled = false; btn1.textContent = '⚡ 一键从 GitHub 在线更新并重启'; }
-    if (btn2) { btn2.disabled = false; btn2.textContent = '⚡ 一键在线升级并重启'; }
+    toast(T('upg_fail') + e.message, 'bad');
+    if (btn1) { btn1.disabled = false; btn1.textContent = T('upgrade_now2'); }
+    if (btn2) { btn2.disabled = false; btn2.textContent = T('upgrade_now'); }
   }
 }
 
@@ -1555,24 +1915,25 @@ async function loadStatus(){
   try{
     const d = await api('/admin/status');
     $('pSvc').className = 'pill on';
-    $('pSvc').innerHTML = '<span class="led"></span>服务 <b>正常</b>';
+    $('pSvc').innerHTML = `<span class="led"></span>${esc(T('pill_svc'))} <b>${esc(T('svc_ok'))}</b>`;
     $('pBr').className = 'pill ' + (d.browser_running ? 'on' : 'off');
-    $('pBr').innerHTML = `<span class="led"></span>浏览器 <b>${d.browser_running ? '运行中' : '空闲'}</b>`;
+    $('pBr').innerHTML = `<span class="led"></span>${esc(T('pill_browser'))} <b>${d.browser_running ? esc(T('br_on')) : esc(T('br_off'))}</b>`;
     $('sMedia').textContent = d.media_count ?? 0;
     if (d.base_url){ $('dBase').textContent = d.base_url; $('inBase').value = d.base_url; }
   }catch(e){
     if (authOK === false){
       $('pSvc').className = 'pill';
-      $('pSvc').innerHTML = '<span class="led"></span>服务 <b>待登录</b>';
+      $('pSvc').innerHTML = `<span class="led"></span>${esc(T('pill_svc'))} <b>${esc(T('svc_login'))}</b>`;
     } else {
       $('pSvc').className = 'pill off';
-      $('pSvc').innerHTML = '<span class="led"></span>服务 <b>' + esc(e.message).slice(0,28) + '</b>';
+      $('pSvc').innerHTML = `<span class="led"></span>${esc(T('pill_svc'))} <b>` + esc(e.message).slice(0,28) + '</b>';
     }
   }
 }
 
 function refreshAll(){ loadStatus(); loadPool(); loadApikey(); loadRepoStatus(false); }
 
+applyLang();
 refreshAll();
 setInterval(() => {
   loadStatus(); loadPool();

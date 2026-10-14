@@ -1,3 +1,75 @@
+Muse2API Cookie Import Extension — Install Guide
+=================================================
+[中文说明见下文 / Chinese version below](#中文说明)
+
+This extension does one thing: sync your browser's muse.ai login Cookies
+to your muse2api service. No Python, no terminal needed.
+
+
+1. Extract
+----------
+Extract muse2api-extension.zip to a folder you won't delete, e.g.:
+
+    Windows : D:\muse2api-extension
+    macOS   : ~/Documents/muse2api-extension
+
+After extracting you should see manifest.json, popup.html, popup.js.
+
+
+2. Load it in Chrome / Edge
+---------------------------
+Chrome:
+  1. Type chrome://extensions in the address bar, press Enter
+  2. Turn on the "Developer mode" switch (top right)
+  3. Click "Load unpacked" (top left)
+  4. Select the folder from step 1 (the folder itself, not a single file)
+  5. A puzzle icon appears in the toolbar; pin it (optional but handy)
+
+Edge:
+  1. Type edge://extensions in the address bar, press Enter
+  2. Turn on "Developer mode" (bottom left)
+  3. Click "Load unpacked"
+  4. Same as above
+
+Other Chromium-based browsers (Brave / Vivaldi / 360 Speed, etc.) are similar.
+
+
+3. Use
+------
+1. In this browser, open https://muse.ai/ and log in
+   until you can see the chat UI.
+2. On the muse2api admin page, "Account Pool" section top, copy the BASE URL and API Key.
+3. Click the extension icon in the toolbar and fill in both fields (once — it remembers).
+4. Click "Read & import". "✓ Import successful" means you're done.
+
+
+4. FAQ
+------
+Q: "No muse.ai Cookies found"
+A: This browser isn't logged in to muse.ai yet. Open https://muse.ai/ and log in first.
+
+Q: "Missing core keys like hatch_sess"
+A: Same as above — login isn't complete. Confirm the chat UI is visible, then click again.
+
+Q: "Wrong API Key (server returned 401)"
+A: Re-copy the API Key from the admin page. Keys start with m2a_.
+
+Q: Cross-origin / network error
+A: Check whether the service address uses https, and whether the service itself loads
+   (try opening <service-address>/admin directly in the browser).
+
+Q: Will it send my Cookies anywhere else?
+A: No. The extension only has the cookies and storage permissions, and the code is right
+   there in popup.js — audit it yourself: it only POSTs to the service address you entered.
+
+
+5. Uninstall
+------------
+chrome://extensions → find "Muse2API Cookie Import" → Remove.
+
+---
+
+<a id="中文说明"></a>
 Muse2API Cookie 导入扩展 —— 安装说明
 =====================================
 

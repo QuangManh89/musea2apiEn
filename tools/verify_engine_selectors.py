@@ -1,12 +1,14 @@
-"""直接用 engine.py 的现网 JS 片段打真页面，验证 / 修正选择器。
+"""Hit the live page with engine.py's real-world JS snippet to verify / fix selectors.
+直接用 engine.py 的现网 JS 片段打真页面，验证 / 修正选择器。
 
-用法：
+Usage / 用法：
   python3 tools/verify_engine_selectors.py
-会：
-  1) 连到现网 muse.ai 页面
-  2) 跑 engine._ATT_JS -> 打印抓到的附件
-  3) 跑 engine 的注入 + 等待确认逻辑，测「移除附件」按钮是否出现
-  4) 打印当前 composer 里所有 button[aria-label]
+It will / 会：
+  1) connect to the live muse.ai page / 连到现网 muse.ai 页面
+  2) run engine._ATT_JS -> print captured attachments / 跑 engine._ATT_JS -> 打印抓到的附件
+  3) run engine's inject + wait-confirm logic to test whether the "remove attachment" button shows up
+     跑 engine 的注入 + 等待确认逻辑，测「移除附件」按钮是否出现
+  4) print all button[aria-label] in the current composer / 打印当前 composer 里所有 button[aria-label]
 """
 from __future__ import annotations
 
@@ -31,16 +33,17 @@ def find_page_ws():
     for p in pages:
         if p.get("type") == "page" and "muse.ai" in (p.get("url") or ""):
             return p.get("webSocketDebuggerUrl"), p.get("url")
-    raise SystemExit("没找到 muse.ai 页面")
+    raise SystemExit("no muse.ai page found / 没找到 muse.ai 页面")
 
 
 class FakeEngine:
-    """只带 page 的小壳，复用 engine 的 JS / 逻辑。"""
+    """Tiny shell carrying only a page, reusing engine's JS / logic.
+    只带 page 的小壳，复用 engine 的 JS / 逻辑。"""
     def __init__(self, page):
         self.page = page
         self.cfg = SimpleNamespace(media_dir="/tmp", profile_dir="/tmp")
 
-    # 借用真方法
+    # borrow real methods / 借用真方法
     attachments = E.MuseEngine.attachments
     _clear_attachments = E.MuseEngine._clear_attachments
 
@@ -51,7 +54,7 @@ def main():
     c = CDP(ws)
     e = FakeEngine(c)
     try:
-        # 0) composer 所有 aria-label
+        # 0) all aria-labels in composer / composer 所有 aria-label
         labels = c.js("""JSON.stringify(Array.from(document.querySelectorAll('button[aria-label]'))
             .map(function(b){return b.getAttribute('aria-label');}))""")
         print("=== button[aria-label] on page ===")
@@ -64,11 +67,11 @@ def main():
             print("  ", json.dumps({k: (str(v)[:70] if k.endswith('Src') or k == 'src' else v)
                                     for k, v in a.items()}, ensure_ascii=False))
 
-        # 2) 注入 + 两种确认判据
-        print("\n=== 注入 1x1 PNG ===")
+        # 2) inject + both confirm criteria / 注入 + 两种确认判据
+        print("\n=== inject 1x1 PNG / 注入 1x1 PNG ===")
         res = c.js(E.MuseEngine._attach_image.__doc__ and
                    "0" or "0")  # noop placeholder
-        # 直接搬 engine 的注入 JS
+        # reuse engine's inject JS directly / 直接搬 engine 的注入 JS
         inject = """(function(b64, mime){
             var bin=atob(b64); var arr=new Uint8Array(bin.length);
             for(var i=0;i<bin.length;i++) arr[i]=bin.charCodeAt(i);
@@ -96,7 +99,7 @@ def main():
                 print(f"  [t={i*0.5+0.5}s] OLD(Remove attachment EN)={old}  NEW(移除附件 ZH)={zh}  composerImgs={img}")
                 if old or zh:
                     break
-        # 清理
+        # cleanup / 清理
         print("clear:", e._clear_attachments())
     finally:
         c.close()
